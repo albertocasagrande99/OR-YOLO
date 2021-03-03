@@ -1,49 +1,98 @@
-from flask import Flask, render_template , request , jsonify
-from PIL import Image
-import os , io , sys
-import numpy as np 
+import os
+from flask import Flask, request, render_template, send_from_directory
+from flask import Flask, session, request, redirect, url_for
+import yolo_detection_images
+import string
+import random
+import json
 import cv2
-import base64
-from yolo_detection_images import runModel
+
+
+
+__author__ = 'IO'
 
 app = Flask(__name__)
 
-@app.route('/detectObject' , methods=['POST'])
-def mask_image():
-	# print(request.files , file=sys.stderr)
-	file = request.files['image'].read() ## byte file
-	npimg = np.fromstring(file, np.uint8)
-	img = cv2.imdecode(npimg,cv2.IMREAD_COLOR)
-	img = runModel(img)
-	img = Image.fromarray(img.astype("uint8"))
-	rawBytes = io.BytesIO()
-	img.save(rawBytes, "JPEG")
-	rawBytes.seek(0)
-	img_base64 = base64.b64encode(rawBytes.read())
-	return jsonify({'status':str(img_base64)})
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-@app.route('/test' , methods=['GET','POST'])
-def test():
-	print("log: got at test" , file=sys.stderr)
-	return jsonify({'status':'succces'})
+#Frammento di codice usato per gestire gli errori del Server (eccezione 404 page not found)
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
-@app.route('/')
-def home():
-	return render_template('./index.html')
+#Visualizzazione index della web app
+@app.route("/")
+def index():
+    return render_template("index.html")
 
-@app.route('/image')
-def imageDetector():
-	return render_template('./image.html')
+#Visualizzazione della pagine di upload
+@app.route("/image")
+def upload_get():
+    return render_template("image.html")
 
-	
+#Metodo richiamato quando si fa l'upload dell'immagine
+@app.route("/image", methods=["POST"])
+def upload():
+    #Controllo sessione dell'utente
+    if not session.get('user') is None:
+        print("Sessione già creata per l'utente")
+    else:
+        print("Nuovo Utente, creazione sessione")
+        session["user"] = id_generator(10)
+    print("Codice sessione corrente: "+session.get("user"))
+
+    
+    target = os.path.join(APP_ROOT, 'images/')
+    #Creazione cartella ./images se non presente
+    if not os.path.isdir(target):
+        os.mkdir(target)
+
+    #Salvataggio immagine caricata dall'utente nella cartella ./images
+    for upload in request.files.getlist("file"):
+        listImmagini = os.listdir("./images")
+        print("Il file caricato è {}".format(upload.filename))
+        filename = upload.filename
+        estensione = filename[-3:]  #Prelievo estensione immagine utente
+        filename = session.get("user") +"."+ estensione #Rinominazione immagine caricata dall'utente con il nome della sessione corrente (per utilizzo multi-utente contemporaneamente)
+        #Sovrascrivere l'ultima immagine caricata da un utente (se presente)
+        if filename in listImmagini:
+            os.remove("./images/"+filename)
+        session["lastImage"] = filename 
+        destination = "/".join([target, filename])
+        #Salvataggio immagine nella cartella ./images
+        upload.save(destination)
+        img, obj = yolo_detection_images.result(filename)
+        print(obj)
+        oggetti = []
+        for elem in obj:
+            oggetti.append(elem.split())
+
+    return render_template("image.html", filename = filename, oggetti = oggetti)
+
+
+@app.route('/image/<filename>')
+def send_image(filename):
+    return send_from_directory("images", filename)
+
+#Funzione per agire sulla cache
 @app.after_request
-def after_request(response):
-    print("log: setting cors" , file = sys.stderr)
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-    return response
+def add_header(r):
+    """
+    Add headers to both force latest IE rendering engine or Chrome Frame,
+    and also to cache the rendered page for 10 minutes.
+    """
+    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    r.headers["Pragma"] = "no-cache"
+    r.headers["Expires"] = "0"
+    r.headers['Cache-Control'] = 'public, max-age=0'
+    return r
 
+#Funzione per generare id casuale utente
+def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 
-if __name__ == '__main__':
-	app.run(debug = True)
+#Funzioni richiamate al momento della creazione del Server
+if __name__ == "__main__":
+    app.secret_key = 'super secret key'
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+    app.run(port=4555, debug=True)
