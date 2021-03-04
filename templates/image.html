@@ -13,7 +13,9 @@
 	<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet" type="text/css">
 	<link href="static/core/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 	<link href="static/core/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-	<link href="static/core/css/templatemo_style.css" rel="stylesheet" type="text/css">	
+	<link href="static/core/css/templatemo_style.css" rel="stylesheet" type="text/css">
+    <link href="static/core/css/radioInput.css" rel="stylesheet" type="text/css">
+    <link href="static/core/css/link.css" rel="stylesheet" type="text/css">	
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" crossorigin="anonymous"></script>
     <link rel="shortcut icon" href="/static/assets/images/favicon.png" type="image/png">
 
@@ -121,7 +123,7 @@
             width: 100%;
         }
 
-        .uploader label {
+        .uploader > label {
             float: left;
             clear: both;
             width: 100%;
@@ -133,14 +135,14 @@
             transition: all 0.2s ease;
             user-select: none;
         }
-        .uploader label:hover {
+        .uploader > label:hover {
             border-color: #454cad;
         }
-        .uploader label.hover {
+        .uploader > label.hover {
             border: 3px solid #454cad;
             box-shadow: inset 0 0 0 6px #eee;
         }
-        .uploader label.hover #start i.fa {
+        .uploader > label.hover #start i.fa {
             transform: scale(0.8);
             opacity: 0.3;
         }
@@ -215,7 +217,7 @@
         .uploader input[type="file"] {
             display: none;
         }
-        .uploader div {
+        .uploader > div {
             margin: 0 0 0.5rem 0;
             color: #5f6982;
         }
@@ -250,9 +252,10 @@
 	</div>
 	<div class="templatemo-container">
 		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 left-container" style="background-color: rgb(53, 91, 217)"> 
-			<h1 class="logo-left hidden-xs margin-bottom-60" style="color: white;">Object</h1>			
+			<h1 class="logo-left hidden-xs" style="color: white; margin-bottom: 40px;">Object</h1>			
 			<div class="tm-left-inner-container">
 				<ul class="nav nav-stacked templatemo-nav">
+                <li><a href="/"><i class="fa fa-home fa-medium"></i><b>Home</b></a></li>
 				  <li><a href="/image" class="active"><i class="fa fa-image fa-medium"></i><b>Image detector</b></a></li>
 				  <li><a href="#"><i class="fa fa-video-camera fa-medium"></i><b>Video detector</b></a></li>
 				  <li><a href="#"><i class="fa fa-send-o fa-medium"></i><b>Services</b></a></li>
@@ -262,43 +265,65 @@
 		</div> <!-- left section -->
 		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 white-bg right-container">
             <img src="static/assets/images/logo-2.svg" alt="Logo" style="width: 20%; position: absolute; top: 10px; right: 10px; z-index: 100;">
-			<h1 class="logo-right hidden-xs margin-bottom-60">Detection</h1>	
+			<h1 class="logo-right hidden-xs" style="margin-bottom: 40px;">Detection</h1>	
 			<div class="tm-right-inner-container">
-				<h1 class="templatemo-header">Carica la tua immagine</h1>
                 <div>
-                    <!-- Header -->
-                    <header id="portfolio">
-                        <div class="w3-container" style="text-align:center; padding-top: 10px;">
-                            <div class="alert alert-info w3-animate-right" >
-                                <strong>Carica un'immagine .jpg o .png e aspetta qualche secondo per vedere i risultati</strong><br>
-                            </div>                
+                    <div id="form_upload">
+                        <h1 class="templatemo-header">Carica la tua immagine</h1>
+                        <!-- Header -->
+                        <header id="portfolio">
+                            <div class="w3-container" style="text-align:center; padding-top: 10px;">
+                                <div class="alert alert-info w3-animate-right" >
+                                    <strong>Carica un'immagine .jpg o .png e aspetta qualche secondo per vedere i risultati</strong><br>
+                                </div>                
+                            </div>
+                        </header>
+                        <!-- Upload  -->
+                        <div style="width: 100%; display: block; margin-left: auto; margin-right: auto;" id="form"> 
+                            
+                            <form id="file-upload-form" class="uploader" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+                                <input id="file-upload" type="file" name="file" accept="image/*" required/>
+                            
+                                <label for="file-upload" id="file-drag">
+                                <img id="file-image" src="#" alt="Preview" class="hidden">
+                                <div id="start" style="height: 100px;">
+                                    <i class="fa fa-download" aria-hidden="true" style="margin-top: -10px;"></i>
+                                    <div>Seleziona una immagine da elaborare</div>
+                                    <div id="notimage" class="hidden">Please select an image</div>
+                                    <span id="file-upload-btn" class="btn btn-primary" style="border-radius: 10px; background-color: rgb(53, 91, 217);">Select a file</span>
+                                </div>
+                                <div id="response" class="hidden">
+                                    <div id="messages"></div>
+                                    <progress class="progress" id="file-progress" value="0">
+                                        <span>0</span>%
+                                    </progress>
+                                </div>
+                                </label>
+                                <div id="inputContainer">
+                                    <fieldset id="aspectRatio--group" class="inputGroup">
+                                        <p class="labelRadio">Seleziona qualità immagine</p>
+                                        <div class="segmentedControl">
+                                            <span class="segmentedControl--group">
+                                                <input type="radio" name="qualità" id="alta" value="alta" checked />
+                                                <label class="labelRadio" for="alta">Alta</label>
+                                            </span>
+                                            <span class="segmentedControl--group">
+                                                <input type="radio" name="qualità" id="media" value="media"/>
+                                                <label class="labelRadio" for="media">Media</label>
+                                            </span>
+                                            <span class="segmentedControl--group">
+                                                <input type="radio" name="qualità" id="bassa" value="bassa"/>
+                                                <label class="labelRadio" for="bassa">Bassa</label>
+                                            </span>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                                <button class="btn btn-primary submit" type="submit" style="border-radius: 10px; float: right; margin-top: -10px; background-color: rgb(53, 91, 217);"><i class="fa fa-upload" aria-hidden="true"></i> Upload</button>
+                            </form>
                         </div>
-                    </header>
-                    <!-- Upload  -->
-                    <div style="width: 100%; display: block; margin-left: auto; margin-right: auto;" id="form"> 
-                        <form id="file-upload-form" class="uploader" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
-                            <input id="file-upload" type="file" name="file" accept="image/*" required/>
-                        
-                            <label for="file-upload" id="file-drag">
-                            <img id="file-image" src="#" alt="Preview" class="hidden">
-                            <div id="start" style="height: 120px;">
-                                <i class="fa fa-download" aria-hidden="true"></i>
-                                <div>Seleziona una immagine da elaborare</div>
-                                <div id="notimage" class="hidden">Please select an image</div>
-                                <span id="file-upload-btn" class="btn btn-primary" style="border-radius: 10px; background-color: rgb(53, 91, 217);">Select a file</span>
-                            </div>
-                            <div id="response" class="hidden">
-                                <div id="messages"></div>
-                                <progress class="progress" id="file-progress" value="0">
-                                    <span>0</span>%
-                                </progress>
-                            </div>
-                            </label>
-                            <button class="btn btn-primary submit" type="submit" style="border-radius: 10px; float: right; background-color: rgb(53, 91, 217);">Upload</button>
-                        </form>
                     </div>
                     <div id="oggettiRilevati">
-                        <h1 class="templatemo-header" style="padding-top: 20px;">Immagine caricata elaborata</h1>
+                        <h1 class="templatemo-header">Immagine caricata elaborata</h1>
                         {% if filename!=null %} 
                         <img id="img" src="{{ url_for('send_image', filename=filename) }}" style="width: 80%;">
                         {% endif %}
@@ -309,6 +334,7 @@
                             <div class="item item-4"></div>
                         </div>	
                         <div>
+                            <p style="float: right; margin-top: 5px;">Tempo di elaborazione: <b>{{ tempo }} s</b></p><br>
                             <hr>
                             {% if oggetti|length != 0 %}
                             <h1 class="templatemo-header">Ho riconosciuto i seguenti oggetti:</h1>
@@ -334,6 +360,9 @@
                             <p>Ops... Non sono riuscito ad identificare nessun oggetto</p>
                             {% endif %}
                         </div>
+                        <div class="wrapper">
+                            <a class="first after" href="/image">Carica un'altra immagine</a>
+                        </div>
                     </div> 
 			    </div>	
 		    </div> <!-- right section -->
@@ -346,15 +375,18 @@
             document.getElementsByClassName("submit")[0].style.display = "none";
             
             if(document.getElementById("img").getAttribute("src")!=""){
-                document.getElementById("portfolio").style.display = "none";
+                document.getElementById("form_upload").style.display = "none";
                 document.getElementById("oggettiRilevati").style.display = "block";
                 
-                img = document.getElementById("img");
+                // Dimensioni immagine
+                /*img = document.getElementById("img");
                 if(img.width < img.height || img.width == img.height){
-                    img.style.width="60%";
+                    img.style.width="40%";
+                    console.log(img.width);
+                    console.log(img.height);
                 }else{
-                    img.style.width="100%";
-                }
+                    img.style.width="90%";
+                }*/
             }
         });
 
@@ -518,6 +550,30 @@
                 document.getElementById("loader").style.display = "block";
             }
         })
+
+        //Input type = radio
+        let aspectRatioGroup = document.querySelector('#aspectRatio--group .segmentedControl');
+        let radios = aspectRatioGroup.querySelectorAll('input');
+        let x = 1;
+
+        // set CSS Var to number of radios we have
+        aspectRatioGroup.style.setProperty('--options',radios.length);
+
+        // loop through radio elements
+        radios.forEach((input)=>{
+            // store position as data attribute
+            input.setAttribute('data-pos',x);
+	
+            // add click handler to change position
+	        input.addEventListener('click',(e)=>{
+		        aspectRatioGroup.style.setProperty('--options-active',e.target.getAttribute('data-pos'));
+	        });
+	        // increment counter
+	        x++;
+        });
+
+        // add class to enable the sliding pill animation, otherwise it uses a fallback
+        aspectRatioGroup.classList.add('useSlidingAnimation');
     </script>
     </body>
 </html>

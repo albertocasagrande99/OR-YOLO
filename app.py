@@ -6,7 +6,9 @@ import string
 import random
 import json
 import cv2
-
+from PIL import Image
+import PIL
+import glob
 
 
 __author__ = 'IO'
@@ -52,22 +54,34 @@ def upload():
         listImmagini = os.listdir("./images")
         print("Il file caricato è {}".format(upload.filename))
         filename = upload.filename
+        q = request.form.get('qualità')
         estensione = filename[-3:]  #Prelievo estensione immagine utente
         filename = session.get("user") +"."+ estensione #Rinominazione immagine caricata dall'utente con il nome della sessione corrente (per utilizzo multi-utente contemporaneamente)
-        #Sovrascrivere l'ultima immagine caricata da un utente (se presente)
+        #Sovrascrivere l'ultima immagine caricata da un utente (se presente)  
+
         if filename in listImmagini:
             os.remove("./images/"+filename)
         session["lastImage"] = filename 
         destination = "/".join([target, filename])
         #Salvataggio immagine nella cartella ./images
         upload.save(destination)
-        img, obj = yolo_detection_images.result(filename)
-        print(obj)
+        
+        im = Image.open("./images/"+filename)
+        print(f"The image size dimensions are: {im.size}")
+        if(q == "alta"):
+            im.save("./images/"+filename,optimize=True,quality=100)
+        elif(q == "media"):
+            im.save("./images/"+filename,optimize=True,quality=50)
+        else:
+            im.save("./images/"+filename,optimize=True,quality=10)
+
+        img, obj, tempo = yolo_detection_images.result(filename)
+        #print(obj)
         oggetti = []
         for elem in obj:
             oggetti.append(elem.split())
 
-    return render_template("image.html", filename = filename, oggetti = oggetti)
+    return render_template("image.html", filename = filename, oggetti = oggetti, tempo = tempo)
 
 
 @app.route('/image/<filename>')

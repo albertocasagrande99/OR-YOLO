@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 import os
 import time
+from PIL import Image
+import PIL
 
 whT = 320
 confThreshold = 0.5
@@ -23,7 +25,7 @@ net = cv2.dnn.readNetFromDarknet(modelConfiguration, modelWeights)
 net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
 net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
 
-def findObjects(outputs, img):
+def findObjects(outputs, img, input):
     hT, wT, cT = img.shape
     bbox = []
     classIds = []
@@ -44,12 +46,20 @@ def findObjects(outputs, img):
     print(len(bbox))
     indices = cv2.dnn.NMSBoxes(bbox, confs, confThreshold, nmsThreshold)
 
+    im = Image.open("./images/"+input)
+    wid, hgt = im.size
+
     for i in indices:
         i = i[0]
         box = bbox[i]
         x,y,w,h = box[0], box[1], box[2], box[3]
-        cv2.rectangle(img,(x,y),(x+w, y+h),(0,0,255),2)
-        cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,255),2)
+        if(wid > 1500 and hgt > 1500):
+            cv2.rectangle(img,(x,y),(x+w, y+h),(0,0,255),8)
+            cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 5.5, (0,0,255),11)
+        else:
+            cv2.rectangle(img,(x,y),(x+w, y+h),(0,0,255),2)
+            cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,255),2)
+        
         oggetti.append(""+classNames[classIds[i]]+" "+str('%.2f'%(float(confs[i]*100)))+"%")
     
     return img, oggetti
@@ -71,11 +81,12 @@ def result(input):
     print(outputs[2])
 
     print(outputs[0][0])
-    res, obj = findObjects(outputs, img)
+    res, obj = findObjects(outputs, img, input)
     end = time.time()
+    tempo = ('%.3f'%(float(end - start)))
     print("[INFO] YOLO took {:.6f} seconds".format(end - start))
     os.remove("./images/"+input)
     target = os.path.join(APP_ROOT, 'images/')
     destination = "/".join([target, input])
     cv2.imwrite(destination, res)
-    return res, obj
+    return res, obj, tempo
