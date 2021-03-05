@@ -61,7 +61,8 @@ def findObjects(outputs, img, input):
             cv2.rectangle(img,(x,y),(x+w, y+h),(0,0,255),2)
             cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,255),2)
         
-        oggetti.append(""+classNames[classIds[i]]+" "+str('%.2f'%(float(confs[i]*100)))+"%")
+        #oggetti.append(""+classNames[classIds[i]]+" "+str('%.2f'%(float(confs[i]*100)))+"%")
+        oggetti.append((classNames[classIds[i]], str('%.2f'%(float(confs[i]*100)))+"%"))
     
     return img, oggetti
 

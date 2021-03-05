@@ -2,6 +2,7 @@ import os
 from flask import Flask, request, render_template, send_from_directory
 from flask import Flask, session, request, redirect, url_for
 import yolo_detection_images
+import yolo_detection_videos
 import string
 import random
 import json
@@ -75,17 +76,62 @@ def upload():
             im.save(APP_ROOT+"/images/"+filename,optimize=True,quality=10)
 
         img, obj, tempo = yolo_detection_images.result(filename)
-        #print(obj)
-        oggetti = []
-        for elem in obj:
-            oggetti.append(elem.split())
-
-    return render_template("image.html", filename = filename, oggetti = oggetti, tempo = tempo)
+    return render_template("image.html", filename = filename, oggetti=obj, tempo = tempo)
 
 
 @app.route('/image/<filename>')
 def send_image(filename):
     return send_from_directory("images", filename)
+
+
+@app.route("/video")
+def video():
+    return render_template("video.html")
+
+
+@app.route("/video", methods=["POST"])
+def upload_video():
+    #Controllo sessione dell'utente
+    if not session.get('user') is None:
+        print("Sessione già creata per l'utente")
+    else:
+        print("Nuovo Utente, creazione sessione")
+        session["user"] = id_generator(10)
+    print("Codice sessione corrente: "+session.get("user"))
+
+    
+    target = os.path.join(APP_ROOT, 'videos/')
+    #Creazione cartella ./images se non presente
+    if not os.path.isdir(target):
+        os.mkdir(target)
+
+    #Salvataggio immagine caricata dall'utente nella cartella ./images
+    for upload in request.files.getlist("file"):
+        listImmagini = os.listdir(APP_ROOT+"/videos")
+        print("Il file caricato è {}".format(upload.filename))
+        filename = upload.filename
+        estensione = filename[-3:]  #Prelievo estensione video utente
+        filename = session.get("user") +"."+ estensione #Rinominazione video caricato dall'utente con il nome della sessione corrente (per utilizzo multi-utente contemporaneamente)
+        #Sovrascrivere l'ultimo video caricato da un utente (se presente)  
+
+        if filename in listImmagini:
+            os.remove(APP_ROOT+"/videos/"+filename)
+        session["lastVideo"] = filename 
+        destination = "/".join([target, filename])
+        #Salvataggio video nella cartella ./videos
+        upload.save(destination)
+        obj = yolo_detection_videos.findVideoObjects(filename)
+        
+        oggetti = [] 
+        for i in obj: 
+            if i not in oggetti: 
+                oggetti.append(i) 
+
+    return render_template("video.html", filename=filename, oggetti=oggetti)
+
+@app.route('/video/<filename>')
+def send_video(filename):
+    return send_from_directory("videos", '00'+filename)
 
 #Funzione per agire sulla cache
 @app.after_request
