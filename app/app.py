@@ -1,6 +1,6 @@
 import os
 from flask import Flask, request, render_template, send_from_directory
-from flask import Flask, session, request, redirect, url_for
+from flask import Flask, session, request, redirect, url_for, Response
 import yolo_detection_images
 import yolo_detection_videos
 import string
@@ -10,12 +10,17 @@ import cv2
 from PIL import Image
 import PIL
 import glob
+import imutils
+import time
+import numpy as np
+import pafy
 
 __author__ = 'IO'
 
 app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+sub = cv2.createBackgroundSubtractorMOG2()  # create background subtractor
 
 #Frammento di codice usato per gestire gli errori del Server (eccezione 404 page not found)
 @app.errorhandler(404)
@@ -120,18 +125,41 @@ def upload_video():
         destination = "/".join([target, filename])
         #Salvataggio video nella cartella ./videos
         upload.save(destination)
-        obj = yolo_detection_videos.findVideoObjects(filename)
+        #obj = yolo_detection_videos.findObjects(filename)
         
+        '''
         oggetti = [] 
         for i in obj: 
             if i not in oggetti: 
                 oggetti.append(i) 
+        '''
+    return render_template("video.html", filename=filename)
 
-    return render_template("video.html", filename=filename, oggetti=oggetti)
-
+'''
 @app.route('/video/<filename>')
 def send_video(filename):
     return send_from_directory("videos", '00'+filename)
+'''
+
+@app.route("/YouTubeVideo")
+def YTvideo():
+    return render_template("YTvideo.html")
+
+@app.route("/YouTubeVideo", methods=["POST"])
+def link_video():
+    #Controllo sessione dell'utente
+    if not session.get('user') is None:
+        print("Sessione già creata per l'utente")
+    else:
+        print("Nuovo Utente, creazione sessione")
+        session["user"] = id_generator(10)
+    print("Codice sessione corrente: "+session.get("user"))
+
+    url = request.form.get('url')
+    video = pafy.new(url)
+    session["url"] = url
+    return render_template("YTvideo.html", filename=url, titolo=video.title)
+
 
 #Funzione per agire sulla cache
 @app.after_request
@@ -150,6 +178,14 @@ def add_header(r):
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
+@app.route('/video_feed/<filename>')
+def video_feed(filename):
+    if(filename == "link"):
+        return Response(yolo_detection_videos.findYouTubeObjects(session["url"]),
+                        mimetype='multipart/x-mixed-replace; boundary=frame')
+    else:
+        return Response(yolo_detection_videos.findVideoObjects(filename),
+                        mimetype='multipart/x-mixed-replace; boundary=frame')
 
 #Funzioni richiamate al momento della creazione del Server
 if __name__ == "__main__":

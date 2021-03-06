@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<head>
+	<!-- templatemo 419 black white -->
+    <!-- 
+    Black White
+    http://www.templatemo.com/preview/templatemo_419_black_white
+    -->
+	<title>YouTube Video detector</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet" type="text/css">
+	<link href="static/core/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link href="static/core/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	<link href="static/core/css/templatemo_style.css" rel="stylesheet" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" crossorigin="anonymous"></script>
+    <link rel="shortcut icon" href="/static/assets/images/favicon.png" type="image/png">
+
+    <style>
+        .container {
+                position: absolute;
+                width: 160px;
+                height: 160px;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin: auto;
+            }
+
+        .item {
+            width: 80px;
+            height: 80px;
+            position: absolute;
+        }
+
+        .item-1 {
+            background-color: #FA5667;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            animation: item-1_move 1.8s cubic-bezier(.6,.01,.4,1) infinite;
+        }
+
+        .item-2 {
+            background-color: #7A45E5;
+            top: 0;
+            right: 0;
+            z-index: 100;
+            animation: item-2_move 1.8s cubic-bezier(.6,.01,.4,1) infinite;
+        }
+
+        .item-3 {
+            background-color: #1B91F7;
+            bottom: 0;
+            right: 0;
+            z-index: 100;
+            animation: item-3_move 1.8s cubic-bezier(.6,.01,.4,1) infinite;
+        }
+
+        .item-4 {
+            background-color: #FAC24C;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            animation: item-4_move 1.8s cubic-bezier(.6,.01,.4,1) infinite;
+        }
+
+        @keyframes item-1_move {
+            0%, 100% {transform: translate(0, 0)} 
+            25% {transform: translate(0, 80px)} 
+            50% {transform: translate(80px, 80px)} 
+            75% {transform: translate(80px, 0)} 
+        }
+
+        @keyframes item-2_move {
+            0%, 100% {transform: translate(0, 0)} 
+            25% {transform: translate(-80px, 0)} 
+            50% {transform: translate(-80px, 80px)} 
+            75% {transform: translate(0, 80px)} 
+        }
+
+        @keyframes item-3_move {
+            0%, 100% {transform: translate(0, 0)} 
+            25% {transform: translate(0, -80px)} 
+            50% {transform: translate(-80px, -80px)} 
+            75% {transform: translate(-80px, 0)} 
+        }
+
+        @keyframes item-4_move {
+            0%, 100% {transform: translate(0, 0)} 
+            25% {transform: translate(80px, 0)} 
+            50% {transform: translate(80px, -80px)} 
+            75% {transform: translate(0, -80px)} 
+        }
+
+        img{
+            border-radius: 10px;
+        }
+
+        @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css);
+        @import url('https://fonts.googleapis.com/css?family=Roboto');
+        h2 {
+            font-family: "Roboto", sans-serif;
+            font-size: 26px;
+            line-height: 1;
+            color: #454cad;
+            margin-bottom: 0;
+        }
+        p {
+            font-family: "Roboto", sans-serif;
+            font-size: 18px;
+            color: #5f6982;
+        }
+
+        @import url(https://fonts.googleapis.com/css?family=Montserrat);
+        .text-input {
+            position: relative;
+            margin-top: 50px;
+        }
+        .text-input input[type="text"] {
+            display: inline-block;
+            width: 100%;
+            height: 40px;
+            box-sizing: border-box;
+            outline: none;
+            border: 1px solid lightgray;
+            border-radius: 3px;
+            padding: 10px 10px 10px 100px;
+            transition: all 0.1s ease-out;
+        }
+        .text-input input[type="text"] + label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            height: 40px;
+            line-height: 40px;
+            color: white;
+            border-radius: 3px 0 0 3px;
+            padding: 0 20px;
+            background: rgb(53, 91, 217);
+            transform: translateZ(0) translateX(0);
+            transition: all 0.3s ease-in;
+            transition-delay: 0.2s;
+        }
+        .text-input input[type="text"]:focus + label {
+            transform: translateY(-120%) translateX(0%);
+            border-radius: 3px;
+            transition: all 0.1s ease-out;
+        }
+        .text-input input[type="text"]:focus {
+            padding: 10px;
+            transition: all 0.3s ease-out;
+            transition-delay: 0.2s;
+        }
+ 
+    </style>
+</head>
+<body>
+	<div class="templatemo-logo visible-xs-block">
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 white-bg logo-left-container">
+			<h1 class="logo-left">Object Detection</h1>
+		</div>			
+	</div>
+	<div class="templatemo-container">
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 left-container" style="background-color: rgb(53, 91, 217)"> 
+			<h1 class="logo-left hidden-xs" style="color: white; margin-bottom: 40px;">Object</h1>			
+			<div class="tm-left-inner-container">
+				<ul class="nav nav-stacked templatemo-nav">
+                <li><a href="/"><i class="fa fa-home fa-medium"></i><b>Home</b></a></li>
+				  <li><a href="/image"><i class="fa fa-image fa-medium"></i><b>Image detector</b></a></li>
+				  <li><a href="/video"><i class="fa fa-video-camera fa-medium"></i><b>Video detector</b></a></li>
+                  <li><a href="/YouTubeVideo" class="active"><i class="fa fa-youtube-play fa-medium"></i><b>YouTube Video detector</b></a></li>
+				  <li><a href="#"><i class="fa fa-send-o fa-medium"></i><b>Services</b></a></li>
+				  <li><a href="#"><i class="fa fa-gears fa-medium"></i><b>About Us</b></a></li>
+				</ul>
+			</div>
+		</div> <!-- left section -->
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 white-bg right-container">	
+            <img src="static/assets/images/logo-2.svg" alt="Logo" style="width: 20%; position: absolute; top: 20px; right: 20px; z-index: 100;">
+			<h1 class="logo-right hidden-xs" style="margin-bottom: 40px;">Detection</h1>	
+			<div class="tm-right-inner-container">
+                <div>
+                    <div id="form_upload">
+                        <h1 class="templatemo-header">Inserisci il link</h1>
+                        <!-- Upload  -->
+                        <div class="container" id="loader">
+                            <div class="item item-1"></div>
+                            <div class="item item-2"></div>
+                            <div class="item item-3"></div>
+                            <div class="item item-4"></div>
+                        </div>
+                        <div style="width: 100%; display: block; margin-left: auto; margin-right: auto;" id="form"> 
+                            <header id="portfolio">
+                                <div class="w3-container" style="text-align:center; padding-top: 10px;">
+                                    <div class="alert alert-info" >
+                                        <strong>Inserisci il link al video di YouTube</strong><br>
+                                    </div>                
+                                </div>
+                            </header>
+                            <form id="file-upload-form" class="uploader" action="{{ url_for('link_video') }}" method="POST" enctype="multipart/form-data">
+                                <div class="text-input">
+                                    <input type="text" id="input1" placeholder="Link video youtube" name="url" required>
+                                    <label for="input1">URL</label>
+                                </div>
+                                <button class="btn btn-primary submit" type="submit" style="margin-top: 10px;  border-radius: 5px; height: 35px; background-color: rgb(53, 91, 217);"><i class="fa fa-send" aria-hidden="true"></i> Invia</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div id="oggettiRilevati">
+                        <h1 class="templatemo-header">Video in elaborazione...</h1>
+                        <h2>{{ titolo }}</h2>
+                        <hr>
+                        {% if filename!=null %} 
+                        <div>
+                            <img src="{{ url_for('video_feed', filename='link') }}" style="width: 100%;">
+                        </div>
+                        {% endif %}
+                        <button class="btn btn-primary submit" type="button" onclick="nuovoVideo()" style="font-size: 15px; border-radius: 10px; margin-top: 30px; padding-top: 10px; padding-bottom: 10px; width: 250px; box-shadow: 5px 5px 5px #888888; background-color: rgb(53, 91, 217); display: block; margin-left: auto; margin-right: auto;"><i class="fa fa-upload" aria-hidden="true"></i> Carica un altro video</button>
+                    </div> 
+			    </div>	
+		    </div> <!-- right section -->
+	    </div>
+    <script>
+        $( document ).ready(function() {
+            document.getElementById("loader").style.display = "none";
+            document.getElementById("oggettiRilevati").style.display = "none";
+            
+            if("{{filename}}" != ""){
+                document.getElementById("form_upload").style.display = "none";
+                document.getElementById("oggettiRilevati").style.display = "block";
+            }
+        });
+
+
+
+        //Loader
+        $('.submit').click(function() {
+            
+            document.getElementById("form").style.opacity = 0.3;
+            document.getElementById("loader").style.display = "block";
+            
+        })
+
+        function nuovoVideo(){
+            location.href = "/YouTubeVideo";
+        }
+    </script>
+    </body>
+</html>

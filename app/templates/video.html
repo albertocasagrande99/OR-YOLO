@@ -256,6 +256,7 @@
                 <li><a href="/"><i class="fa fa-home fa-medium"></i><b>Home</b></a></li>
 				  <li><a href="/image"><i class="fa fa-image fa-medium"></i><b>Image detector</b></a></li>
 				  <li><a href="/video" class="active"><i class="fa fa-video-camera fa-medium"></i><b>Video detector</b></a></li>
+                  <li><a href="/YouTubeVideo"><i class="fa fa-youtube-play fa-medium"></i><b>YouTube Video detector</b></a></li>
 				  <li><a href="#"><i class="fa fa-send-o fa-medium"></i><b>Services</b></a></li>
 				  <li><a href="#"><i class="fa fa-gears fa-medium"></i><b>About Us</b></a></li>
 				</ul>
@@ -280,7 +281,7 @@
                             <header id="portfolio">
                                 <div class="w3-container" style="text-align:center; padding-top: 10px;">
                                     <div class="alert alert-info" >
-                                        <strong>Carica un video .mp4 e aspetta qualche minuto per vedere i risultati</strong><br>
+                                        <strong>Carica un video .mp4 e vedrai i risultati</strong><br>
                                     </div>                
                                 </div>
                             </header>
@@ -307,36 +308,12 @@
                         </div>
                     </div>
                     <div id="oggettiRilevati">
-                        <h1 class="templatemo-header">Video caricato elaborato</h1>
+                        <h1 class="templatemo-header">Video in elaborazione...</h1>
                         {% if filename!=null %} 
-                        <div class="embed-responsive embed-responsive-16by9">
-                            <iframe  class="embed-responsive-item" src="{{ url_for('send_video', filename=filename) }}" allowfullscreen style="border-radius: 15px;"></iframe>
+                        <div>
+                            <img src="{{ url_for('video_feed', filename=filename) }}" style="width: 100%;">
                         </div>
                         {% endif %}
-                        <div>
-                            <hr>
-                            {% if oggetti|length != 0 %}
-                            <h1 class="templatemo-header">Ho riconosciuto i seguenti oggetti:</h1>
-                            <table class="table table-striped text-center">
-                                <thead>
-                                <tr>
-                                    <th scope="col" class="text-center">#</th>
-                                    <th scope="col" class="text-center">Oggetto</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                    {% for i in range (oggetti|length) %}
-                                <tr>
-                                    <th scope="row" class="text-center">{{loop.index}}</th>
-                                    <td style="text-transform: capitalize;">{{ oggetti[i] }}</td>
-                                </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                            {% else %}
-                            <p>Ops... Non sono riuscito ad identificare nessun oggetto</p>
-                            {% endif %}
-                        </div>	
                         <button class="btn btn-primary submit" type="button" onclick="nuovoVideo()" style="font-size: 15px; border-radius: 10px; margin-top: 30px; padding-top: 10px; padding-bottom: 10px; width: 250px; box-shadow: 5px 5px 5px #888888; background-color: rgb(53, 91, 217); display: block; margin-left: auto; margin-right: auto;"><i class="fa fa-upload" aria-hidden="true"></i> Carica un altro video</button>
                     </div> 
 			    </div>	
