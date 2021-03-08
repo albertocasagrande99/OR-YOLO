@@ -60,7 +60,8 @@ def upload():
         print("Il file caricato è {}".format(upload.filename))
         filename = upload.filename
         q = request.form.get('qualità')
-        estensione = filename[-3:]  #Prelievo estensione immagine utente
+        estensione = os.path.splitext(filename)[1] #Prelievo estensione immagine utente
+        #estensione = filename[-3:]
         filename = session.get("user") +"."+ estensione #Rinominazione immagine caricata dall'utente con il nome della sessione corrente (per utilizzo multi-utente contemporaneamente)
         #Sovrascrivere l'ultima immagine caricata da un utente (se presente)  
 
@@ -156,9 +157,13 @@ def link_video():
     print("Codice sessione corrente: "+session.get("user"))
 
     url = request.form.get('url')
-    video = pafy.new(url)
-    session["url"] = url
-    return render_template("YTvideo.html", filename=url, titolo=video.title)
+    try:
+        video = pafy.new(url)
+        session["url"] = url
+        titolo = video.title
+    except:
+        titolo = "Error"
+    return render_template("YTvideo.html", filename=url, titolo=titolo)
 
 
 #Funzione per agire sulla cache

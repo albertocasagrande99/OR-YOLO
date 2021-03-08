@@ -18,6 +18,7 @@
     <link rel="shortcut icon" href="/static/assets/images/favicon.png" type="image/png">
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500&display=swap');
         .container {
                 position: absolute;
                 width: 160px;
@@ -202,23 +203,34 @@
                             </header>
                             <form id="file-upload-form" class="uploader" action="{{ url_for('link_video') }}" method="POST" enctype="multipart/form-data">
                                 <div class="text-input">
-                                    <input type="text" id="input1" placeholder="Link video youtube" name="url" required>
+                                    <input type="text" id="input1" placeholder="https://www.youtube.com/watch?" name="url" required>
                                     <label for="input1">URL</label>
                                 </div>
-                                <button class="btn btn-primary submit" type="submit" style="margin-top: 10px;  border-radius: 5px; height: 35px; background-color: rgb(53, 91, 217);"><i class="fa fa-send" aria-hidden="true"></i> Invia</button>
+                                <button class="btn btn-primary submit" type="submit" style="float: right; margin-top: 10px;  border-radius: 5px; height: 35px; background-color: rgb(53, 91, 217);"><i class="fa fa-send" aria-hidden="true"></i> Invia</button>
                             </form>
                         </div>
                     </div>
                     <div id="oggettiRilevati">
-                        <h1 class="templatemo-header">Video in elaborazione...</h1>
-                        <h2>{{ titolo }}</h2>
+                        <h1 class="templatemo-header" style="font-family: 'Raleway', sans-serif; font-size: 18px;">Link: <b>{{ filename }}</b></h1>
+                        {% if titolo!="Error" %}
+                        <h1 class="templatemo-header" style="font-family: 'Raleway', sans-serif;">{{ titolo }}</h1>
                         <hr>
-                        {% if filename!=null %} 
+                        {% if filename!=null %}
                         <div>
                             <img src="{{ url_for('video_feed', filename='link') }}" style="width: 100%;">
                         </div>
+                        <button class="btn btn-primary submit" type="button" onclick="nuovoVideo()" style="font-size: 15px; border-radius: 10px; margin-top: 30px; padding-top: 10px; padding-bottom: 10px; width: 250px; box-shadow: 5px 5px 5px #888888; background-color: rgb(53, 91, 217); display: block; margin-left: auto; margin-right: auto;"><i class="fa fa-link" aria-hidden="true"></i> Inserisci un altro link</button>
                         {% endif %}
-                        <button class="btn btn-primary submit" type="button" onclick="nuovoVideo()" style="font-size: 15px; border-radius: 10px; margin-top: 30px; padding-top: 10px; padding-bottom: 10px; width: 250px; box-shadow: 5px 5px 5px #888888; background-color: rgb(53, 91, 217); display: block; margin-left: auto; margin-right: auto;"><i class="fa fa-upload" aria-hidden="true"></i> Carica un altro video</button>
+                        {% else %}
+                        <div class="w3-container" style="text-align:center; padding-top: 10px;">
+                            <div class="alert alert-danger">
+                                <h4><strong>Ops...!</strong></h4>
+                                <p>Ho riscontrato dei problemi con il link che hai inserito. Controlla nuovamente il link e assicurati che sia quello giusto!</p>
+                                <hr>
+                                <button class="btn btn-danger submit" type="button" onclick="nuovoVideo()" style=" font-size: 15px; border-radius: 10px; margin-top: 10px; padding-top: 10px; padding-bottom: 10px; width: 250px; box-shadow: 5px 5px 5px #888888;  display: block; margin-left: auto; margin-right: auto;"><i class="fa fa-link" aria-hidden="true"></i> Inserisci un altro link</button>
+                            </div>                
+                        </div>
+                        {% endif %}
                     </div> 
 			    </div>	
 		    </div> <!-- right section -->

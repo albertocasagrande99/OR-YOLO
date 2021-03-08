@@ -15,7 +15,7 @@ classNames = []
 
 with open(classesFiles, 'rt') as f:
     classNames = f.read().rstrip('\n').split('\n')
-
+COLORS = np.random.randint(0, 255, size = (len(classNames), 3), dtype = 'uint8')
 # print(classNames)
 # print(len(classNames))
 
@@ -54,14 +54,14 @@ def findObjects(outputs, img, input):
         i = i[0]
         box = bbox[i]
         x,y,w,h = box[0], box[1], box[2], box[3]
+        color = [int(c) for c in COLORS[classIds[i]]]
         if(wid > 1500 and hgt > 1500):
-            cv2.rectangle(img,(x,y),(x+w, y+h),(0,0,255),8)
-            cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 5.5, (0,0,255),11)
+            cv2.rectangle(img,(x,y),(x+w, y+h),color,8)
+            cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 5.5, color,11)
         else:
-            cv2.rectangle(img,(x,y),(x+w, y+h),(0,0,255),2)
-            cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0,0,255),2)
+            cv2.rectangle(img,(x,y),(x+w, y+h),color,2)
+            cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10), cv2.FONT_HERSHEY_SIMPLEX , 0.6, color,2)
         
-        #oggetti.append(""+classNames[classIds[i]]+" "+str('%.2f'%(float(confs[i]*100)))+"%")
         oggetti.append((classNames[classIds[i]], str('%.2f'%(float(confs[i]*100)))+"%"))
     
     return img, oggetti
