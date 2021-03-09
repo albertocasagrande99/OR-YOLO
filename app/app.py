@@ -14,6 +14,7 @@ import imutils
 import time
 import numpy as np
 import pafy
+import base64
 
 __author__ = 'IO'
 
@@ -21,6 +22,7 @@ app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 sub = cv2.createBackgroundSubtractorMOG2()  # create background subtractor
+des=os.path.join(APP_ROOT,"static","test.jpeg")
 
 #Frammento di codice usato per gestire gli errori del Server (eccezione 404 page not found)
 @app.errorhandler(404)
@@ -166,6 +168,11 @@ def link_video():
     return render_template("YTvideo.html", filename=url, titolo=titolo)
 
 
+@app.route("/Webcam")
+def webcam():
+    return render_template("webcam.html")
+
+
 #Funzione per agire sulla cache
 @app.after_request
 def add_header(r):
@@ -188,9 +195,13 @@ def video_feed(filename):
     if(filename == "link"):
         return Response(yolo_detection_videos.findYouTubeObjects(session["url"]),
                         mimetype='multipart/x-mixed-replace; boundary=frame')
+    elif(filename=="webcam"):
+        return Response(yolo_detection_videos.findWebcamObjects(),
+                        mimetype='multipart/x-mixed-replace; boundary=frame')
     else:
         return Response(yolo_detection_videos.findVideoObjects(filename),
                         mimetype='multipart/x-mixed-replace; boundary=frame')
+
 
 #Funzioni richiamate al momento della creazione del Server
 if __name__ == "__main__":

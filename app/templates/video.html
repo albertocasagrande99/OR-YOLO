@@ -98,21 +98,6 @@
         img{
             border-radius: 10px;
         }
-
-        @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css);
-        @import url('https://fonts.googleapis.com/css?family=Roboto');
-        h2 {
-            font-family: "Roboto", sans-serif;
-            font-size: 26px;
-            line-height: 1;
-            color: #454cad;
-            margin-bottom: 0;
-        }
-        p {
-            font-family: "Roboto", sans-serif;
-            font-size: 18px;
-            color: #5f6982;
-        }
  
         .uploader {
             display: block;
@@ -256,9 +241,8 @@
                 <li><a href="/"><i class="fa fa-home fa-medium"></i><b>Home</b></a></li>
 				  <li><a href="/image"><i class="fa fa-image fa-medium"></i><b>Image detector</b></a></li>
 				  <li><a href="/video" class="active"><i class="fa fa-video-camera fa-medium"></i><b>Video detector</b></a></li>
-                  <li><a href="/YouTubeVideo"><i class="fa fa-youtube-play fa-medium"></i><b>YouTube Video detector</b></a></li>
-				  <li><a href="#"><i class="fa fa-send-o fa-medium"></i><b>Services</b></a></li>
-				  <li><a href="#"><i class="fa fa-gears fa-medium"></i><b>About Us</b></a></li>
+                  <li><a href="/YouTubeVideo"><i class="fa fa-youtube-play fa-medium"></i><b>YouTube video detector</b></a></li>
+				  <li><a href="/Webcam"><i class="fa fa-camera fa-medium"></i><b>Webcam detector</b></a></li>
 				</ul>
 			</div>
 		</div> <!-- left section -->
@@ -293,7 +277,7 @@
                                 <div id="start" style="height: 130px;">
                                     <i class="fa fa-download" aria-hidden="true"></i>
                                     <div>Seleziona un video da elaborare</div>
-                                    <div id="notimage" class="hidden">Seleziona un video mp4!</div>
+                                    <div id="notimage" class="hidden">Seleziona un video .mp4!</div>
                                     <span id="file-upload-btn" class="btn btn-primary" style="border-radius: 10px; background-color: rgb(53, 91, 217);">Select a file</span>
                                 </div>
                                 <div id="response" class="hidden">
@@ -373,7 +357,7 @@
             // console.log(fileType);
             var imageName = file.name;
 
-            var isGood = (/\.(?=mp4|png|jpeg)/gi).test(imageName);
+            var isGood = (/\.(?=mp4)/gi).test(imageName);
             if (isGood) {
                 document.getElementById('start').classList.add("hidden");
                 document.getElementById('response').classList.remove("hidden");
@@ -465,7 +449,6 @@
 
         //Loader
         $('.submit').click(function() {
-            console.log(fileSupportato);
             if(fileSupportato){
                 document.getElementById("form").style.opacity = 0.3;
                 document.getElementById("loader").style.display = "block";

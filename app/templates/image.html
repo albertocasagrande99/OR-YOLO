@@ -100,15 +100,6 @@
             border-radius: 10px;
         }
 
-        @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css);
-        @import url('https://fonts.googleapis.com/css?family=Roboto');
-        h2 {
-            font-family: "Roboto", sans-serif;
-            font-size: 26px;
-            line-height: 1;
-            color: #454cad;
-            margin-bottom: 0;
-        }
         p {
             font-family: "Roboto", sans-serif;
             font-size: 18px;
@@ -262,11 +253,11 @@
             [data-tooltip]:before {
             position: absolute;
             bottom: -150%;
-            left: 50%;
+            left: 47%;
             margin-bottom: 5px;
             margin-left: -80px;
             padding: 7px;
-            width: 160px;
+            width: 180px;
             -webkit-border-radius: 3px;
             -moz-border-radius: 3px;
             border-radius: 3px;
@@ -320,9 +311,8 @@
                 <li><a href="/"><i class="fa fa-home fa-medium"></i><b>Home</b></a></li>
 				  <li><a href="/image" class="active"><i class="fa fa-image fa-medium"></i><b>Image detector</b></a></li>
 				  <li><a href="/video"><i class="fa fa-video-camera fa-medium"></i><b>Video detector</b></a></li>
-                  <li><a href="/YouTubeVideo"><i class="fa fa-youtube-play fa-medium"></i><b>YouTube Video detector</b></a></li>
-				  <li><a href="#"><i class="fa fa-send-o fa-medium"></i><b>Services</b></a></li>
-				  <li><a href="#"><i class="fa fa-gears fa-medium"></i><b>About Us</b></a></li>
+                  <li><a href="/YouTubeVideo"><i class="fa fa-youtube-play fa-medium"></i><b>YouTube video detector</b></a></li>
+				  <li><a href="/Webcam"><i class="fa fa-camera fa-medium"></i><b>Webcam detector</b></a></li>
 				</ul>
 			</div>
 		</div> <!-- left section -->
@@ -370,15 +360,15 @@
                                     <fieldset id="aspectRatio--group" class="inputGroup">
                                         <p class="labelRadio">Seleziona qualità immagine</p>
                                         <div class="segmentedControl">
-                                            <span class="segmentedControl--group" data-tooltip="Qualità 100%">
+                                            <span class="segmentedControl--group" data-tooltip="Qualità originale">
                                                 <input type="radio" name="qualità" id="alta" value="alta" checked />
                                                 <label class="labelRadio" for="alta">Alta</label>
                                             </span>
-                                            <span class="segmentedControl--group" data-tooltip="Qualità 50%">
+                                            <span class="segmentedControl--group" data-tooltip="Qualità ridotta del 50%">
                                                 <input type="radio" name="qualità" id="media" value="media"/>
                                                 <label class="labelRadio" for="media">Media</label>
                                             </span>
-                                            <span class="segmentedControl--group" data-tooltip="Qualità 10%">
+                                            <span class="segmentedControl--group" data-tooltip="Qualità ridotta del 90%">
                                                 <input type="radio" name="qualità" id="bassa" value="bassa"/>
                                                 <label class="labelRadio" for="bassa">Bassa</label>
                                             </span>
@@ -595,7 +585,6 @@
 
         //Loader
         $('.submit').click(function() {
-            console.log(fileSupportato);
             if(fileSupportato){
                 document.getElementById("form").style.opacity = 0.3;
                 document.getElementById("loader").style.display = "block";

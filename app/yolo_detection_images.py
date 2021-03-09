@@ -57,10 +57,10 @@ def findObjects(outputs, img, input):
         color = [int(c) for c in COLORS[classIds[i]]]
         if(wid > 1500 and hgt > 1500):
             cv2.rectangle(img,(x,y),(x+w, y+h),color,8)
-            cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 5.5, color,11)
+            cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10), cv2.FONT_HERSHEY_SIMPLEX, 5.5, color,14)
         else:
             cv2.rectangle(img,(x,y),(x+w, y+h),color,2)
-            cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10), cv2.FONT_HERSHEY_SIMPLEX , 0.6, color,2)
+            cv2.putText(img,f'{classNames[classIds[i]].upper()} {int(confs[i]*100)}%', (x,y-10), cv2.FONT_HERSHEY_SIMPLEX , 0.6, color,2,cv2.LINE_AA)
         
         oggetti.append((classNames[classIds[i]], str('%.2f'%(float(confs[i]*100)))+"%"))
     

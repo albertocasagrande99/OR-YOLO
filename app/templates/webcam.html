@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<head>
+	<!-- templatemo 419 black white -->
+    <!-- 
+    Black White
+    http://www.templatemo.com/preview/templatemo_419_black_white
+    -->
+	<title>Webcam detector</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet" type="text/css">
+	<link href="static/core/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link href="static/core/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	<link href="static/core/css/templatemo_style.css" rel="stylesheet" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" crossorigin="anonymous"></script>
+    <link rel="shortcut icon" href="/static/assets/images/favicon.png" type="image/png">
+
+    <style>
+        img{
+            border-radius: 10px;
+        }
+
+        @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css);
+        @import url('https://fonts.googleapis.com/css?family=Roboto');
+        h2 {
+            font-family: "Roboto", sans-serif;
+            font-size: 26px;
+            line-height: 1;
+            color: #454cad;
+            margin-bottom: 0;
+        }
+        p {
+            font-family: "Roboto", sans-serif;
+            font-size: 18px;
+            color: #5f6982;
+        }
+    </style>
+</head>
+<body>
+	<div class="templatemo-logo visible-xs-block">
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 white-bg logo-left-container">
+			<h1 class="logo-left">Object Detection</h1>
+		</div>			
+	</div>
+	<div class="templatemo-container">
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 left-container" style="background-color: rgb(53, 91, 217)"> 
+			<h1 class="logo-left hidden-xs" style="color: white; margin-bottom: 40px;">Object</h1>			
+			<div class="tm-left-inner-container">
+				<ul class="nav nav-stacked templatemo-nav">
+                <li><a href="/"><i class="fa fa-home fa-medium"></i><b>Home</b></a></li>
+				  <li><a href="/image"><i class="fa fa-image fa-medium"></i><b>Image detector</b></a></li>
+				  <li><a href="/video"><i class="fa fa-video-camera fa-medium"></i><b>Video detector</b></a></li>
+                  <li><a href="/YouTubeVideo"><i class="fa fa-youtube-play fa-medium"></i><b>YouTube video detector</b></a></li>
+				  <li><a href="/Webcam" class="active"><i class="fa fa-camera fa-medium"></i><b>Webcam detector</b></a></li>
+				  <li><a href="#"><i class="fa fa-gears fa-medium"></i><b>About Us</b></a></li>
+				</ul>
+			</div>
+		</div> <!-- left section -->
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 white-bg right-container">	
+            <img src="static/assets/images/logo-2.svg" alt="Logo" style="width: 20%; position: absolute; top: 20px; right: 20px; z-index: 100;">
+			<h1 class="logo-right hidden-xs" style="margin-bottom: 40px;">Detection</h1>	
+			<div class="tm-right-inner-container">
+                <div>
+                    <div id="oggettiRilevati">
+                        <h1 class="templatemo-header">Video in elaborazione...</h1>
+                        <div>
+                            <img src="{{ url_for('video_feed', filename='webcam') }}" style="width: 100%;">
+                        </div>
+                    </div> 
+			    </div>	
+		    </div> <!-- right section -->
+	    </div>
+    </body>
+</html>

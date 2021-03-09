@@ -100,22 +100,12 @@
             border-radius: 10px;
         }
 
-        @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css);
-        @import url('https://fonts.googleapis.com/css?family=Roboto');
-        h2 {
-            font-family: "Roboto", sans-serif;
-            font-size: 26px;
-            line-height: 1;
-            color: #454cad;
-            margin-bottom: 0;
-        }
         p {
-            font-family: "Roboto", sans-serif;
+            font-family: 'Raleway', sans-serif;
             font-size: 18px;
             color: #5f6982;
         }
 
-        @import url(https://fonts.googleapis.com/css?family=Montserrat);
         .text-input {
             position: relative;
             margin-top: 50px;
@@ -173,9 +163,8 @@
                 <li><a href="/"><i class="fa fa-home fa-medium"></i><b>Home</b></a></li>
 				  <li><a href="/image"><i class="fa fa-image fa-medium"></i><b>Image detector</b></a></li>
 				  <li><a href="/video"><i class="fa fa-video-camera fa-medium"></i><b>Video detector</b></a></li>
-                  <li><a href="/YouTubeVideo" class="active"><i class="fa fa-youtube-play fa-medium"></i><b>YouTube Video detector</b></a></li>
-				  <li><a href="#"><i class="fa fa-send-o fa-medium"></i><b>Services</b></a></li>
-				  <li><a href="#"><i class="fa fa-gears fa-medium"></i><b>About Us</b></a></li>
+                  <li><a href="/YouTubeVideo" class="active"><i class="fa fa-youtube-play fa-medium"></i><b>YouTube video detector</b></a></li>
+				  <li><a href="/Webcam"><i class="fa fa-camera fa-medium"></i><b>Webcam detector</b></a></li>
 				</ul>
 			</div>
 		</div> <!-- left section -->
@@ -206,7 +195,7 @@
                                     <input type="text" id="input1" placeholder="https://www.youtube.com/watch?" name="url" required>
                                     <label for="input1">URL</label>
                                 </div>
-                                <button class="btn btn-primary submit" type="submit" style="float: right; margin-top: 10px;  border-radius: 5px; height: 35px; background-color: rgb(53, 91, 217);"><i class="fa fa-send" aria-hidden="true"></i> Invia</button>
+                                <button class="btn btn-primary submit" type="submit" style="float: right; margin-top: 10px;  border-radius: 5px; height: 35px; background-color: rgb(53, 91, 217);"><i class="fa fa-send-o" aria-hidden="true"></i> Invia</button>
                             </form>
                         </div>
                     </div>
@@ -246,14 +235,12 @@
             }
         });
 
-
-
         //Loader
         $('.submit').click(function() {
-            
-            document.getElementById("form").style.opacity = 0.3;
-            document.getElementById("loader").style.display = "block";
-            
+            if(document.getElementById("input1").value != ""){
+                document.getElementById("form").style.opacity = 0.3;
+                document.getElementById("loader").style.display = "block";
+            }
         })
 
         function nuovoVideo(){
