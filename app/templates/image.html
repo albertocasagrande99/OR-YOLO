@@ -322,7 +322,7 @@
 			<div class="tm-right-inner-container">
                 <div>
                     <div id="form_upload">
-                        <h1 class="templatemo-header">Carica la tua immagine</h1>
+                        <h1 class="templatemo-header">Upload your image <i class="fa fa-image fa-medium"></i></h1>
                         <!-- Upload  -->
                         <div class="container" id="loader">
                             <div class="item item-1"></div>
@@ -334,7 +334,7 @@
                             <header id="portfolio">
                                 <div class="w3-container" style="text-align:center; padding-top: 10px;">
                                     <div class="alert alert-info" >
-                                        <strong>Carica un'immagine .jpg o .png e aspetta qualche secondo per vedere i risultati</strong><br>
+                                        <strong>Upload a .jpg or .png image and wait a few seconds to see the results</strong><br>
                                     </div>                
                                 </div>
                             </header>
@@ -410,10 +410,32 @@
                             {% else %}
                             <p>Ops... Non sono riuscito ad identificare nessun oggetto</p>
                             {% endif %}
+
+                            {% if ogg_count|length != 0 %}
+                            <h1 class="templatemo-header">Resoconto oggetti</h1>
+                            <table class="table table-striped text-center">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col" class="text-center">Oggetto</th>
+                                    <th scope="col" class="text-center">Quantità</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in range (ogg_count|length) %}
+                                <tr>
+                                    <th scope="row">{{loop.index}}</th>
+                                    <td style="text-transform: capitalize;">{{ ogg_count[i][0] }}</td>
+                                    <td style="text-transform: capitalize;">{{ ogg_count[i][1] }}</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            {% endif %}
                         </div>
                         <button class="btn btn-primary submit" type="button" onclick="nuovaImmagine()" style="font-size: 15px; border-radius: 10px; margin-top: 30px; padding-top: 10px; padding-bottom: 10px; width: 250px; box-shadow: 5px 5px 5px #888888; background-color: rgb(53, 91, 217); display: block; margin-left: auto; margin-right: auto;"><i class="fa fa-upload" aria-hidden="true"></i> Carica un'altra immagine</button>
                     </div> 
-			    </div>	
+			    </div>
 		    </div> <!-- right section -->
 	    </div>
     </div>

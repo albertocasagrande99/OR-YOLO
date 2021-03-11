@@ -7,7 +7,7 @@ import PIL
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 whT = 320
-confThreshold = 0.5
+confThreshold = 0.4
 nmsThreshold = 0.3
 classesFiles = APP_ROOT+'/cfg/coco.names'
 classNames = []

@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, render_template, send_from_directory
+from flask import Flask, request, render_template, send_from_directory, jsonify
 from flask import Flask, session, request, redirect, url_for, Response
 import yolo_detection_images
 import yolo_detection_videos
@@ -34,6 +34,7 @@ def page_not_found(e):
 def index():
     return render_template("index.html")
 
+#############   Immagini   #############
 #Visualizzazione della pagine di upload
 @app.route("/image")
 def upload_get():
@@ -84,7 +85,13 @@ def upload():
             im.save(APP_ROOT+"/images/"+filename,optimize=True,quality=10)
 
         img, obj, tempo = yolo_detection_images.result(filename)
-    return render_template("image.html", filename = filename, oggetti=obj, tempo = tempo)
+        objects = []
+        for elem in obj:
+            objects.append(elem[0])
+        objects = {i:objects.count(i) for i in objects}
+        obj_count = []
+        obj_count = [(k, v) for k, v in objects.items()]
+    return render_template("image.html", filename = filename, oggetti=obj, ogg_count=obj_count, tempo = tempo)
 
 
 @app.route('/image/<filename>')
@@ -92,6 +99,7 @@ def send_image(filename):
     return send_from_directory("images", filename)
 
 
+#############   Video   #############
 @app.route("/video")
 def video():
     return render_template("video.html")
@@ -144,6 +152,7 @@ def send_video(filename):
     return send_from_directory("videos", '00'+filename)
 '''
 
+#############   Video YouTube   #############
 @app.route("/YouTubeVideo")
 def YTvideo():
     return render_template("YTvideo.html")
@@ -168,10 +177,48 @@ def link_video():
     return render_template("YTvideo.html", filename=url, titolo=titolo)
 
 
+#############   Webcam   #############
 @app.route("/Webcam")
 def webcam():
-    return render_template("webcam.html")
+    valid_cams = []
+    for i in range(5):
+        cap = cv2.VideoCapture(i)
+        if cap is None or not cap.isOpened():
+            print('Warning: unable to open video source: ', i)
+        else:
+            valid_cams.append(i)
 
+    session["webcams"] = valid_cams
+    session["webcam"] = ""
+    return render_template("webcam.html", webcam="", webcams=valid_cams)
+
+@app.route("/Webcam", methods=["POST"])
+def select_webcam():
+    #Controllo sessione dell'utente
+    if not session.get('user') is None:
+        print("Sessione già creata per l'utente")
+    else:
+        print("Nuovo Utente, creazione sessione")
+        session["user"] = id_generator(10)
+
+    webcam = request.form.get('selectedWebcam')
+    session["webcam"] = webcam
+
+    
+    return render_template("webcam.html", webcam = webcam, webcams=session.get("webcams"))
+
+
+@app.route('/video_feed/<filename>')
+def video_feed(filename):
+    if(filename == "link"):
+        return Response(yolo_detection_videos.findYouTubeObjects(session["url"]),
+                        mimetype='multipart/x-mixed-replace; boundary=frame')
+    elif(filename=="webcam"):
+        return Response(yolo_detection_videos.findVideoObjects(None, "webcam", session.get("webcam")),
+                        mimetype='multipart/x-mixed-replace; boundary=frame')
+    else:
+        return Response(yolo_detection_videos.findVideoObjects(filename, "video", None),
+                        mimetype='multipart/x-mixed-replace; boundary=frame')
 
 #Funzione per agire sulla cache
 @app.after_request
@@ -189,18 +236,6 @@ def add_header(r):
 #Funzione per generare id casuale utente
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
-
-@app.route('/video_feed/<filename>')
-def video_feed(filename):
-    if(filename == "link"):
-        return Response(yolo_detection_videos.findYouTubeObjects(session["url"]),
-                        mimetype='multipart/x-mixed-replace; boundary=frame')
-    elif(filename=="webcam"):
-        return Response(yolo_detection_videos.findWebcamObjects(),
-                        mimetype='multipart/x-mixed-replace; boundary=frame')
-    else:
-        return Response(yolo_detection_videos.findVideoObjects(filename),
-                        mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 #Funzioni richiamate al momento della creazione del Server
