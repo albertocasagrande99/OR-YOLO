@@ -30,70 +30,31 @@
                 margin: auto;
             }
 
-        .item {
-            width: 80px;
-            height: 80px;
+        .reverse-spinner {
+            position: relative;
+            height: 150px;
+            width: 150px;
+            border: 5px solid transparent;
+            border-top-color: #1976d2;
+            border-left-color: #1976d2;
+            border-radius: 50%;
+            -webkit-animation: spin 1.5s linear infinite;
+            animation: spin 1.5s linear infinite;
+        }
+
+        .reverse-spinner::before {
             position: absolute;
-        }
-
-        .item-1 {
-            background-color: #FA5667;
-            top: 0;
-            left: 0;
-            z-index: 100;
-            animation: item-1_move 1.8s cubic-bezier(.6,.01,.4,1) infinite;
-        }
-
-        .item-2 {
-            background-color: #7A45E5;
-            top: 0;
-            right: 0;
-            z-index: 100;
-            animation: item-2_move 1.8s cubic-bezier(.6,.01,.4,1) infinite;
-        }
-
-        .item-3 {
-            background-color: #1B91F7;
-            bottom: 0;
-            right: 0;
-            z-index: 100;
-            animation: item-3_move 1.8s cubic-bezier(.6,.01,.4,1) infinite;
-        }
-
-        .item-4 {
-            background-color: #FAC24C;
-            bottom: 0;
-            left: 0;
-            z-index: 100;
-            animation: item-4_move 1.8s cubic-bezier(.6,.01,.4,1) infinite;
-        }
-
-        @keyframes item-1_move {
-            0%, 100% {transform: translate(0, 0)} 
-            25% {transform: translate(0, 80px)} 
-            50% {transform: translate(80px, 80px)} 
-            75% {transform: translate(80px, 0)} 
-        }
-
-        @keyframes item-2_move {
-            0%, 100% {transform: translate(0, 0)} 
-            25% {transform: translate(-80px, 0)} 
-            50% {transform: translate(-80px, 80px)} 
-            75% {transform: translate(0, 80px)} 
-        }
-
-        @keyframes item-3_move {
-            0%, 100% {transform: translate(0, 0)} 
-            25% {transform: translate(0, -80px)} 
-            50% {transform: translate(-80px, -80px)} 
-            75% {transform: translate(-80px, 0)} 
-        }
-
-        @keyframes item-4_move {
-            0%, 100% {transform: translate(0, 0)} 
-            25% {transform: translate(80px, 0)} 
-            50% {transform: translate(80px, -80px)} 
-            75% {transform: translate(0, -80px)} 
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            content: "";
+            border: 5px solid transparent;
+            border-top-color: #03a9f4;
+            border-left-color: #03a9f4;
+            border-radius: 50%;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
         }
 
         img{
@@ -177,10 +138,7 @@
                         <h1 class="templatemo-header">Inserisci il link <i class="fa fa-youtube-play fa-medium"></i></h1>
                         <!-- Upload  -->
                         <div class="container" id="loader">
-                            <div class="item item-1"></div>
-                            <div class="item item-2"></div>
-                            <div class="item item-3"></div>
-                            <div class="item item-4"></div>
+                            <div class="reverse-spinner"></div>
                         </div>
                         <div style="width: 100%; display: block; margin-left: auto; margin-right: auto;" id="form"> 
                             <header id="portfolio">
@@ -238,7 +196,7 @@
         //Loader
         $('.submit').click(function() {
             if(document.getElementById("input1").value != ""){
-                document.getElementById("form").style.opacity = 0.3;
+                document.getElementById("form").style.opacity = 0.2;
                 document.getElementById("loader").style.display = "block";
             }
         })

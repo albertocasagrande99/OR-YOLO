@@ -91,4 +91,4 @@ def result(input):
     target = os.path.join(APP_ROOT, 'images/')
     destination = "/".join([target, input])
     cv2.imwrite(destination, res)
-    return res, obj, tempo
+    return obj, tempo

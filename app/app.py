@@ -21,10 +21,8 @@ __author__ = 'IO'
 app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-sub = cv2.createBackgroundSubtractorMOG2()  # create background subtractor
-des=os.path.join(APP_ROOT,"static","test.jpeg")
 
-#Frammento di codice usato per gestire gli errori del Server (eccezione 404 page not found)
+#Frammento di codice usato per gestire l'errore 404 lato client (eccezione 404 page not found)
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
@@ -35,12 +33,12 @@ def index():
     return render_template("index.html")
 
 #############   Immagini   #############
-#Visualizzazione della pagine di upload
+#Visualizzazione pagina image.html
 @app.route("/image")
 def upload_get():
     return render_template("image.html")
 
-#Metodo richiamato quando si fa l'upload dell'immagine
+#Metodo richiamato quando si carica un'immagine sul server
 @app.route("/image", methods=["POST"])
 def upload():
     #Controllo sessione dell'utente
@@ -66,8 +64,8 @@ def upload():
         estensione = os.path.splitext(filename)[1] #Prelievo estensione immagine utente
         #estensione = filename[-3:]
         filename = session.get("user") +"."+ estensione #Rinominazione immagine caricata dall'utente con il nome della sessione corrente (per utilizzo multi-utente contemporaneamente)
+        
         #Sovrascrivere l'ultima immagine caricata da un utente (se presente)  
-
         if filename in listImmagini:
             os.remove(APP_ROOT+"/images/"+filename)
         session["lastImage"] = filename 
@@ -75,6 +73,7 @@ def upload():
         #Salvataggio immagine nella cartella ./images
         upload.save(destination)
         
+        #Salvataggio dell'immagine secondo la qualità selezionata dall'utente
         im = Image.open(APP_ROOT+"/images/"+filename)
         print(f"The image size dimensions are: {im.size}")
         if(q == "alta"):
@@ -84,13 +83,16 @@ def upload():
         else:
             im.save(APP_ROOT+"/images/"+filename,optimize=True,quality=10)
 
-        img, obj, tempo = yolo_detection_images.result(filename)
+        obj, tempo = yolo_detection_images.result(filename)
+
+        #Salvataggio degli oggetti presenti nell'immagine in una lista e conteggio elementi per ogni classe di oggetti
         objects = []
         for elem in obj:
             objects.append(elem[0])
         objects = {i:objects.count(i) for i in objects}
         obj_count = []
         obj_count = [(k, v) for k, v in objects.items()]
+
     return render_template("image.html", filename = filename, oggetti=obj, ogg_count=obj_count, tempo = tempo)
 
 
@@ -100,11 +102,12 @@ def send_image(filename):
 
 
 #############   Video   #############
+#Visualizzazione pagina video.html
 @app.route("/video")
 def video():
     return render_template("video.html")
 
-
+#Metodo richiamato quando si carica un video sul server
 @app.route("/video", methods=["POST"])
 def upload_video():
     #Controllo sessione dell'utente
@@ -117,20 +120,20 @@ def upload_video():
 
     
     target = os.path.join(APP_ROOT, 'videos/')
-    #Creazione cartella ./images se non presente
+    #Creazione cartella ./videos se non presente
     if not os.path.isdir(target):
         os.mkdir(target)
 
-    #Salvataggio immagine caricata dall'utente nella cartella ./images
+    #Salvataggio video caricato dall'utente nella cartella ./videos
     for upload in request.files.getlist("file"):
-        listImmagini = os.listdir(APP_ROOT+"/videos")
+        listVideo = os.listdir(APP_ROOT+"/videos")
         print("Il file caricato è {}".format(upload.filename))
         filename = upload.filename
         estensione = filename[-3:]  #Prelievo estensione video utente
         filename = session.get("user") +"."+ estensione #Rinominazione video caricato dall'utente con il nome della sessione corrente (per utilizzo multi-utente contemporaneamente)
+        
         #Sovrascrivere l'ultimo video caricato da un utente (se presente)  
-
-        if filename in listImmagini:
+        if filename in listVideo:
             os.remove(APP_ROOT+"/videos/"+filename)
         session["lastVideo"] = filename 
         destination = "/".join([target, filename])
@@ -153,10 +156,12 @@ def send_video(filename):
 '''
 
 #############   Video YouTube   #############
+#Visualizzazione pagina YTvideo.html
 @app.route("/YouTubeVideo")
 def YTvideo():
     return render_template("YTvideo.html")
 
+#Metodo richiamato quando l'utente invia al server il link al video di youtube
 @app.route("/YouTubeVideo", methods=["POST"])
 def link_video():
     #Controllo sessione dell'utente
@@ -174,14 +179,16 @@ def link_video():
         titolo = video.title
     except:
         titolo = "Error"
-    return render_template("YTvideo.html", filename=url, titolo=titolo)
+    return render_template("YTvideo.html", filename=session.get("url"), titolo=titolo)
 
 
 #############   Webcam   #############
+#Visualizzazione della pagina webcam.html e invio delle informazioni relative alle webcam disponibili
 @app.route("/Webcam")
 def webcam():
+    #Controllo webcam disponibili
     valid_cams = []
-    for i in range(5):
+    for i in range(4):
         cap = cv2.VideoCapture(i)
         if cap is None or not cap.isOpened():
             print('Warning: unable to open video source: ', i)
@@ -190,8 +197,9 @@ def webcam():
 
     session["webcams"] = valid_cams
     session["webcam"] = ""
-    return render_template("webcam.html", webcam="", webcams=valid_cams)
+    return render_template("webcam.html", webcam=session.get("webcam") , webcams=session.get("webcams"))
 
+#Metodo richiamato quando l'utente seleziona la webcam desiderata
 @app.route("/Webcam", methods=["POST"])
 def select_webcam():
     #Controllo sessione dell'utente
@@ -203,9 +211,8 @@ def select_webcam():
 
     webcam = request.form.get('selectedWebcam')
     session["webcam"] = webcam
-
     
-    return render_template("webcam.html", webcam = webcam, webcams=session.get("webcams"))
+    return render_template("webcam.html", webcam=session.get("webcam"), webcams=session.get("webcams"))
 
 
 @app.route('/video_feed/<filename>')
