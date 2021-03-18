@@ -44,7 +44,7 @@ def findObjects(outputs, img, input):
                 bbox.append([x,y,w,h])
                 classIds.append(classId)
                 confs.append(float(confidence))
-    print(len(bbox))
+    #print(len(bbox))
     indices = cv2.dnn.NMSBoxes(bbox, confs, confThreshold, nmsThreshold)
 
     im = Image.open(APP_ROOT+"/images/"+input)
@@ -78,11 +78,11 @@ def result(input):
     #print(net.getUnconnectedOutLayers())
 
     outputs = net.forward(outputNames)
-    print(outputs[0])
-    print(outputs[1])
-    print(outputs[2])
+    #print(outputs[0])
+    #print(outputs[1])
+    #print(outputs[2])
 
-    print(outputs[0][0])
+    #print(outputs[0][0])
     res, obj = findObjects(outputs, img, input)
     end = time.time()
     tempo = ('%.3f'%(float(end - start)))

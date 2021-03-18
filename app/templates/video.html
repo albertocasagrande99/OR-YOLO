@@ -18,6 +18,7 @@
     <link rel="shortcut icon" href="/static/assets/images/favicon.png" type="image/png">
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500&display=swap');
         .container {
             position: absolute;
             width: 160px;
@@ -187,6 +188,15 @@
             cursor: pointer;
         }
 
+        table,td,th{
+            font-family: 'Raleway', sans-serif;
+        }
+
+        .table__head{
+            white-space: nowrap;
+            font-size: 16px;
+        }
+
         @keyframes swing {
             0% {
                 transform: scale(1,1);
@@ -203,6 +213,77 @@
             animation: swing 2s infinite ease-in-out;
         }
 
+        .videoWrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+        }
+        .videoWrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            transition: opacity 500ms;
+            visibility: hidden;
+            opacity: 0;
+        }
+        .overlay:target {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .popup {
+            margin: 70px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 5px;
+            width: 30%;
+            position: relative;
+            transition: all 5s ease-in-out;
+        }
+
+        .popup h2 {
+            margin-top: 0;
+            color: #333;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+        .popup .close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            transition: all 200ms;
+            font-size: 30px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #333;
+        }
+        .popup .close:hover {
+            color: rgb(53, 91, 217);
+        }
+        .popup .content {
+            max-height: 30%;
+            overflow: auto;
+        }
+
+        @media screen and (max-width: 700px){
+            .box{
+                width: 70%;
+            }
+            .popup{
+                width: 70%;
+            }
+        }
         .w3-animate-left{position:relative;animation:animateleft 0.8s}@keyframes animateleft{from{left:-700px;opacity:0} to{left:0;opacity:1}}
         .w3-animate-bottom{position:relative;animation:animatebottom 0.8s}@keyframes animatebottom{from{bottom:-700px;opacity:0} to{bottom:0;opacity:1}}
     </style>
@@ -241,8 +322,17 @@
                             <header id="portfolio">
                                 <div style="text-align:center; padding-top: 10px;">
                                     <div class="alert alert-info" >
-                                        <strong>Upload an .mp4 video and see the results</strong><br>
-                                    </div>                
+                                        <strong>Upload an .mp4 video and see the results </strong><a href="#popup1"><i class="fa fa-info-circle fa-medium"></i></a><br>
+                                    </div>    
+                                    <div id="popup1" class="overlay">
+                                        <div class="popup">
+                                            <h2>Info <i class="fa fa-info-circle fa-medium"></i></h2>
+                                            <a class="close" href="#">&times;</a>
+                                            <div class="content">
+                                                If the video has fewer than 200 frames, it will be processed entirely and then displayed. If so, wait a few seconds please.
+                                            </div>
+                                        </div>
+                                    </div>            
                                 </div>
                             </header>
                             <form id="file-upload-form" class="uploader" action="{{ url_for('upload_video') }}" method="POST" enctype="multipart/form-data">
@@ -268,11 +358,39 @@
                         </div>
                     </div>
                     <div id="oggettiRilevati" class="w3-animate-bottom">
+                        {% if filename!=null %}
+                        {% if type=="immagini" %} 
                         <h1 class="templatemo-header">Video being processed ...</h1>
-                        {% if filename!=null %} 
                         <div>
                             <img src="{{ url_for('video_feed', filename=filename) }}" style="width: 100%;">
                         </div>
+                        {% elif type=="video" %}
+                        <h1 class="templatemo-header">Video processed ...</h1>
+                        <div class="videoWrapper">
+                            <!-- Copy & Pasted from YouTube -->
+                            <iframe width="560" height="349" src="{{ url_for('send_video', filename=filename) }}" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                        {% if oggetti|length != 0 %}
+                        <hr style="border: 1px solid lightblue;">
+                        <h1 class="templatemo-header">Objects</h1>
+                        <table class="table table-striped text-center">
+                            <thead class="table__head">
+                            <tr>
+                                <th scope="col" style="border-bottom: 2px solid lightblue; background-color: lightblue; border-radius: 10px 0 0 0;">#</th>
+                                <th scope="col" class="text-center" style="border-bottom: 2px solid lightblue; background-color: lightblue; border-radius: 0 10px 0 0;"><i class="fa fa-car" aria-hidden="true"></i> Object</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in range (oggetti|length) %}
+                            <tr>
+                                <th scope="row">{{loop.index}}</th>
+                                <td style="text-transform: capitalize;">{{ oggetti[i] }}</td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %}
+                        {% endif %}
                         {% endif %}
                         <button class="btn btn-primary submit" type="button" onclick="nuovoVideo()" style="font-size: 15px; border-radius: 10px; margin-top: 30px; padding-top: 10px; padding-bottom: 10px; width: 250px; box-shadow: 5px 5px 5px #888888; background-color: rgb(53, 91, 217); display: block; margin-left: auto; margin-right: auto;"><i class="fa fa-upload" aria-hidden="true"></i> Upload another video</button>
                     </div> 

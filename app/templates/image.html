@@ -66,6 +66,7 @@
             font-family: "Roboto", sans-serif;
             font-size: 18px;
             color: #5f6982;
+            font-family: 'Raleway', sans-serif;
         }
  
         .uploader {
@@ -366,49 +367,53 @@
                         </div>
                     </div>
                     <div id="oggettiRilevati" class="w3-animate-bottom">
-                        <h1 class="templatemo-header">Uploaded image processed</h1>
+                        <h1 class="templatemo-header">Uploaded image processed </i></h1>
                         {% if filename!=null %} 
                         <div class="wrapper">
                             <img id="img" src="{{ url_for('send_image', filename=filename) }}" style="width: 80%;">
                         </div>
-                        
                         {% endif %}	
                         <div>
-                            <p style="float: right; margin-top: 5px;">Processing time: <b>{{ tempo }} s</b></p><br>
-                            <hr>
+                            <p style="float: right; margin-top: 5px;"><i class="fa fa-clock-o" aria-hidden="true"></i> Processing time: <b>{{ tempo }} s</b></p><br>
+                            <hr style="border: 1px solid lightblue;">
                             {% if oggetti|length != 0 %}
-                            <h1 class="templatemo-header">I have recognized the following items:</h1>
-                            <table class="table table-striped text-center">
-                                <thead class="table__head">
-                                <tr>
-                                    <th scope="col" style="border-bottom: 2px solid lightblue;">#</th>
-                                    <th scope="col" class="text-center" style="border-bottom: 2px solid lightblue;"><i class="fa fa-car" aria-hidden="true"></i> Object</th>
-                                    <th scope="col" class="text-center" style="border-bottom: 2px solid lightblue;"><i class="fa fa-check" aria-hidden="true"></i> Accuracy</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                    {% for i in range (oggetti|length) %}
-                                <tr>
-                                    <th scope="row">{{loop.index}}</th>
-                                    <td style="text-transform: capitalize;">{{ oggetti[i][0] }}</td>
-                                    <td style="text-transform: capitalize;">{{ oggetti[i][1] }}</td>
-                                </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                            <h1 class="templatemo-header">I have recognized the following items <i class="fa fa-bars" aria-hidden="true"></i></h1>
+                            <div style="max-height: 300px; overflow-y: auto;">
+                                <table class="table table-striped text-center">
+                                    <thead class="table__head">
+                                    <tr>
+                                        <th scope="col" style="border-bottom: 2px solid lightblue; background-color: lightblue; border-radius: 10px 0 0 0;">#</th>
+                                        <th scope="col" class="text-center" style="border-bottom: 2px solid lightblue; background-color: lightblue;"><i class="fa fa-car" aria-hidden="true"></i> Object</th>
+                                        <th scope="col" class="text-center" style="border-bottom: 2px solid lightblue; background-color: lightblue; border-radius: 0 10px 0 0;"><i class="fa fa-check" aria-hidden="true"></i> Accuracy</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for i in range (oggetti|length) %}
+                                    <tr>
+                                        <th scope="row">{{loop.index}}</th>
+                                        <td style="text-transform: capitalize;">{{ oggetti[i][0] }}</td>
+                                        <td style="text-transform: capitalize;">{{ oggetti[i][1] }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                             {% else %}
-                            <p>Ops... I was unable to recognize any objects</p>
+                            <div class="alert alert-danger">
+                                <h4><strong>Ops... </strong><i class="fa fa-exclamation-circle"></i></h4>
+                                <p>No objects have been detected in this image</p>
+                            </div> 
                             {% endif %}
 
                             {% if ogg_count|length != 0 %}
-                            <hr>
+                            <hr style="border: 1px solid lightblue;">
                             <h1 class="templatemo-header">Objects</h1>
                             <table class="table table-striped text-center">
                                 <thead class="table__head">
                                 <tr>
-                                    <th scope="col" style="border-bottom: 2px solid lightblue;">#</th>
-                                    <th scope="col" class="text-center" style="border-bottom: 2px solid lightblue;"><i class="fa fa-car" aria-hidden="true"></i> Object</th>
-                                    <th scope="col" class="text-center" style="border-bottom: 2px solid lightblue;"><i class="fa fa-clipboard" aria-hidden="true"></i> Number</th>
+                                    <th scope="col" style="border-bottom: 2px solid lightblue; background-color: lightblue; border-radius: 10px 0 0 0;">#</th>
+                                    <th scope="col" class="text-center" style="border-bottom: 2px solid lightblue; background-color: lightblue;"><i class="fa fa-car" aria-hidden="true"></i> Object</th>
+                                    <th scope="col" class="text-center" style="border-bottom: 2px solid lightblue; background-color: lightblue; border-radius: 0 10px 0 0;"><i class="fa fa-clipboard" aria-hidden="true"></i> Number</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -445,7 +450,7 @@
                 if(img.width < img.height || img.width == img.height){
                     img.style.width="40%";
                 }else{
-                    img.style.width="100%";
+                    img.style.width="75%";
                 }
             }
         });
@@ -459,7 +464,7 @@
                     console.log(img.width);
                     console.log(img.height);
                 }else{
-                    img.style.width="100%";
+                    img.style.width="75%";
                 }
             }
         }

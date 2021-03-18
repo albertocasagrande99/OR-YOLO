@@ -7,7 +7,6 @@ import os
 import time
 import pafy
 import datetime
-from flask import session, render_template
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 labels = APP_ROOT+'/cfg/coco.names'
@@ -19,9 +18,9 @@ LABELS = open(labels).read().strip().split('\n')
 COLORS = np.random.randint(0, 255, size = (len(LABELS), 3), dtype = 'uint8')
 
 
-'''
+
 #Salvataggio video e successiva visualizzazione
-def findVideoObjects(video):
+def detectObjectsSaveVideo(video, total):
 	oggetti = []
 
 # get video frames and pass to YOLO for output
@@ -35,7 +34,6 @@ def findVideoObjects(video):
 
 	# initialize video stream, pointer to output video file and grabbing frame dimension
 	vs = cv2.VideoCapture(input_videos+''+video)
-	#vs = cv2.VideoCapture(0)       WEBCAM
 	fps = vs.get(cv2.CAP_PROP_FPS)
 	writer_width = int(vs.get(cv2.CAP_PROP_FRAME_WIDTH))
 	writer_height = int(vs.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -43,18 +41,7 @@ def findVideoObjects(video):
 	writer = None
 	(W,H) = (None, None)
 
-	# determine the total number of frames in a video
-	try:
-		prop = cv2.CAP_PROP_FRAME_COUNT if imutils.is_cv2() else cv2.CAP_PROP_FRAME_COUNT
-		total = int(vs.get(prop))
-		print(f"[INFO] {total} frames in the video")
-
-	# if error occurs print
-	except:
-		print(f"[INFO] {total} frames in the video")
-		total = -1
-
-	KPS = 4  # Target Keyframes Per Second
+	KPS = 6  # Target Keyframes Per Second
 	hop = round(fps / KPS)
 	curr_frame = 0
 
@@ -139,16 +126,16 @@ def findVideoObjects(video):
 				if total > 0:
 					elap = (end - start)
 					print(f"[INFO] single frame took {round(elap/60,2)} minutes")
-					print(f"[INFO] total estimated time to finish: {(elap*total)/60} minutes")
+					print(f"[INFO] total estimated time to finish: {((elap*total)/60)/KPS} minutes")
 
-			for i in range(4):
+			for i in range(6):
 				writer.write(frame)
 			
 		curr_frame += 1
 	writer.release()
 	vs.release()
 	return oggetti
-'''
+
 
 def findVideoObjects(video, type, source):
 	oggetti = []
@@ -257,7 +244,7 @@ def findVideoObjects(video, type, source):
 	for elem in oggetti:
 		print("- ", elem)
 	cap.release()
-	
+
 #Link video YouTube
 def findYouTubeObjects(url):
 	print(url)

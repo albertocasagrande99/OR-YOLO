@@ -21,6 +21,7 @@ __author__ = 'IO'
 app = Flask(__name__)
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+goAhead = True
 
 #Frammento di codice usato per gestire l'errore 404 lato client (eccezione 404 page not found)
 @app.errorhandler(404)
@@ -41,6 +42,11 @@ def upload_get():
 #Metodo richiamato quando si carica un'immagine sul server
 @app.route("/image", methods=["POST"])
 def upload():
+    global goAhead
+    while goAhead==False:
+        time.sleep(3)
+    goAhead = False
+
     #Controllo sessione dell'utente
     if not session.get('user') is None:
         print("Sessione già creata per l'utente")
@@ -60,10 +66,10 @@ def upload():
         listImmagini = os.listdir(APP_ROOT+"/images")
         print("Il file caricato è {}".format(upload.filename))
         filename = upload.filename
-        q = request.form.get('qualità')
+        session["quality"] = request.form.get('qualità')
         estensione = os.path.splitext(filename)[1] #Prelievo estensione immagine utente
         #estensione = filename[-3:]
-        filename = session.get("user") +"."+ estensione #Rinominazione immagine caricata dall'utente con il nome della sessione corrente (per utilizzo multi-utente contemporaneamente)
+        filename = session.get("user") + estensione #Rinominazione immagine caricata dall'utente con il nome della sessione corrente (per utilizzo multi-utente contemporaneamente)
         
         #Sovrascrivere l'ultima immagine caricata da un utente (se presente)  
         if filename in listImmagini:
@@ -74,16 +80,16 @@ def upload():
         upload.save(destination)
         
         #Salvataggio dell'immagine secondo la qualità selezionata dall'utente
-        im = Image.open(APP_ROOT+"/images/"+filename)
+        im = Image.open(APP_ROOT+"/images/"+session.get("lastImage"))
         print(f"The image size dimensions are: {im.size}")
-        if(q == "alta"):
-            im.save(APP_ROOT+"/images/"+filename,optimize=True,quality=100)
-        elif(q == "media"):
-            im.save(APP_ROOT+"/images/"+filename,optimize=True,quality=50)
+        if(session.get("quality") == "alta"):
+            im.save(APP_ROOT+"/images/"+session.get("lastImage"),optimize=True,quality=100)
+        elif(session.get("quality") == "media"):
+            im.save(APP_ROOT+"/images/"+session.get("lastImage"),optimize=True,quality=50)
         else:
-            im.save(APP_ROOT+"/images/"+filename,optimize=True,quality=10)
+            im.save(APP_ROOT+"/images/"+session.get("lastImage"),optimize=True,quality=10)
 
-        obj, tempo = yolo_detection_images.result(filename)
+        obj, tempo = yolo_detection_images.result(session.get("lastImage"))
 
         #Salvataggio degli oggetti presenti nell'immagine in una lista e conteggio elementi per ogni classe di oggetti
         objects = []
@@ -92,12 +98,13 @@ def upload():
         objects = {i:objects.count(i) for i in objects}
         obj_count = []
         obj_count = [(k, v) for k, v in objects.items()]
-
-    return render_template("image.html", filename = filename, oggetti=obj, ogg_count=obj_count, tempo = tempo)
+    return render_template("image.html", filename = session.get("lastImage"), oggetti=obj, ogg_count=obj_count, tempo = tempo)
 
 
 @app.route('/image/<filename>')
 def send_image(filename):
+    global goAhead
+    goAhead=True
     return send_from_directory("images", filename)
 
 
@@ -139,21 +146,35 @@ def upload_video():
         destination = "/".join([target, filename])
         #Salvataggio video nella cartella ./videos
         upload.save(destination)
-        #obj = yolo_detection_videos.findObjects(filename)
-        
-        '''
-        oggetti = [] 
-        for i in obj: 
-            if i not in oggetti: 
-                oggetti.append(i) 
-        '''
-    return render_template("video.html", filename=filename)
 
-'''
+        #Numero di frame del video. Se num_frame <= 200, il video di output viene salvato.
+        vs = cv2.VideoCapture(APP_ROOT+'/videos/'+filename)
+        fps = vs.get(cv2.CAP_PROP_FPS)
+        try:
+            prop = cv2.CAP_PROP_FRAME_COUNT if imutils.is_cv2() else cv2.CAP_PROP_FRAME_COUNT
+            total = int(vs.get(prop))
+            print(f"[INFO] {total} frames in the video")
+
+	    # if error occurs print
+        except:
+            print(f"[INFO] {total} frames in the video")
+            total = -1
+        vs.release()
+        if(total < 200):
+            oggetti = []
+            obj = yolo_detection_videos.detectObjectsSaveVideo(filename, total)
+            for i in obj: 
+                if i not in oggetti: 
+                    oggetti.append(i) 
+            return render_template("video.html", filename=filename, type="video", oggetti=oggetti)
+
+    return render_template("video.html", filename=filename, type="immagini")
+
+
 @app.route('/video/<filename>')
 def send_video(filename):
     return send_from_directory("videos", '00'+filename)
-'''
+
 
 #############   Video YouTube   #############
 #Visualizzazione pagina YTvideo.html
@@ -175,10 +196,10 @@ def link_video():
     url = request.form.get('url')
     try:
         video = pafy.new(url)
-        session["url"] = url
         titolo = video.title
     except:
         titolo = "Error"
+    session["url"] = url
     return render_template("YTvideo.html", filename=session.get("url"), titolo=titolo)
 
 
@@ -243,7 +264,6 @@ def add_header(r):
 #Funzione per generare id casuale utente
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
-
 
 #Funzioni richiamate al momento della creazione del Server
 if __name__ == "__main__":
