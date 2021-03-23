@@ -299,11 +299,12 @@
 			<h1 class="logo-left hidden-xs" style="color: white; margin-bottom: 40px;">Object</h1>			
 			<div class="tm-left-inner-container">
 				<ul class="nav nav-stacked templatemo-nav">
-                <li><a href="/"><i class="fa fa-home fa-medium"></i><b>Home</b></a></li>
-				  <li><a href="/image"><i class="fa fa-image fa-medium"></i><b>Image detector</b></a></li>
-				  <li><a href="/video" class="active"><i class="fa fa-video-camera fa-medium"></i><b>Video detector</b></a></li>
-                  <li><a href="/YouTubeVideo"><i class="fa fa-youtube-play fa-medium"></i><b>YouTube video detector</b></a></li>
-				  <li><a href="/Webcam"><i class="fa fa-camera fa-medium"></i><b>Webcam detector</b></a></li>
+                    <li><a href="/"><i class="fa fa-home fa-medium"></i><b>Home</b></a></li>
+                    <li><a href="/image"><i class="fa fa-image fa-medium"></i><b>Image detector</b></a></li>
+                    <li><a href="/video" class="active"><i class="fa fa-video-camera fa-medium"></i><b>Video detector</b></a></li>
+                    <li><a href="/YouTubeVideo"><i class="fa fa-youtube-play fa-medium"></i><b>YouTube video detector</b></a></li>
+                    <li><a href="/Webcam"><i class="fa fa-camera fa-medium"></i><b>Webcam detector</b></a></li>
+                    <li><a href="/WebcamClient"><i class="fa fa-camera fa-medium"></i><b>Webcam detector (client)</b></a></li>
 				</ul>
 			</div>
 		</div> <!-- left section -->
@@ -314,7 +315,6 @@
                 <div>
                     <div id="form_upload">
                         <h1 class="templatemo-header w3-animate-left">Upload your video <i class="fa fa-video-camera fa-medium"></i></h1>
-                        <!-- Upload  -->
                         <div class="container" id="loader">
                             <div class="reverse-spinner"></div>
                         </div>
@@ -367,7 +367,6 @@
                         {% elif type=="video" %}
                         <h1 class="templatemo-header">Video processed ...</h1>
                         <div class="videoWrapper">
-                            <!-- Copy & Pasted from YouTube -->
                             <iframe width="560" height="349" src="{{ url_for('send_video', filename=filename) }}" frameborder="0" allowfullscreen></iframe>
                         </div>
                         {% if oggetti|length != 0 %}

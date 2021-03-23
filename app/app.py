@@ -1,6 +1,6 @@
 import os
 from flask import Flask, request, render_template, send_from_directory, jsonify
-from flask import Flask, session, request, redirect, url_for, Response
+from flask import Flask, session, request, redirect, url_for, Response, after_this_request
 import yolo_detection_images
 import yolo_detection_videos
 import string
@@ -15,13 +15,16 @@ import time
 import numpy as np
 import pafy
 import base64
+import re
 
 __author__ = 'IO'
 
 app = Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 goAhead = True
+goAhead2 = True
 
 #Frammento di codice usato per gestire l'errore 404 lato client (eccezione 404 page not found)
 @app.errorhandler(404)
@@ -107,7 +110,6 @@ def send_image(filename):
     goAhead=True
     return send_from_directory("images", filename)
 
-
 #############   Video   #############
 #Visualizzazione pagina video.html
 @app.route("/video")
@@ -162,7 +164,7 @@ def upload_video():
         vs.release()
         if(total < 200):
             oggetti = []
-            obj = yolo_detection_videos.detectObjectsSaveVideo(filename, total)
+            obj = yolo_detection_videos.detectObjectsSaveVideo(filename)
             for i in obj: 
                 if i not in oggetti: 
                     oggetti.append(i) 
@@ -248,18 +250,99 @@ def video_feed(filename):
         return Response(yolo_detection_videos.findVideoObjects(filename, "video", None),
                         mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
+@app.route("/WebcamClient")
+def webcamClient():
+    return render_template("webcamClient.html")
+
+#Metodo richiamato quando l'utente seleziona la webcam desiderata
+@app.route("/WebcamClient", methods=["POST"])
+def upload_data():
+    global goAhead2
+    while goAhead2==False:
+        time.sleep(3)
+    goAhead2 = False
+
+    @after_this_request
+    def add_header(response):
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
+
+    #Controllo sessione dell'utente
+    if not session.get('user') is None:
+        print("Sessione già creata per l'utente")
+    else:
+        print("Nuovo Utente, creazione sessione")
+        session["user"] = id_generator(10)
+
+    if(len(request.files.getlist("image")) > 0):
+        target = os.path.join(APP_ROOT, 'images/')
+        #Creazione cartella ./images se non presente
+        if not os.path.isdir(target):
+            os.mkdir(target)
+
+        for upload in request.files.getlist("image"):
+            listImmagini = os.listdir(APP_ROOT+"/images")
+            print("Il file caricato è {}".format(upload.filename))
+            filename = upload.filename
+            estensione = os.path.splitext(filename)[1] #Prelievo estensione immagine utente
+            filename = session.get("user") + estensione #Rinominazione immagine caricata dall'utente con il nome della sessione corrente (per utilizzo multi-utente contemporaneamente)
+            
+            #Sovrascrivere l'ultima immagine caricata da un utente (se presente)  
+            if filename in listImmagini:
+                os.remove(APP_ROOT+"/images/"+filename)
+            session["lastImage"] = filename
+            destination = "/".join([target, filename])
+            #Salvataggio immagine nella cartella ./images
+            upload.save(destination)
+    
+        obj, tempo = yolo_detection_images.result(session.get("lastImage"))
+        jsonResp = {'filename': filename, 'oggetti': obj}
+        goAhead2=True
+        
+        
+    elif(len(request.files.getlist("video")) > 0):
+        target = os.path.join(APP_ROOT, 'videos/')
+        #Creazione cartella ./videos se non presente
+        if not os.path.isdir(target):
+            os.mkdir(target)
+
+        for upload in request.files.getlist("video"):
+            listVideo = os.listdir(APP_ROOT+"/videos")
+            print("Il file caricato è {}".format(upload.filename))
+            filename = upload.filename
+            estensione = os.path.splitext(filename)[1] #Prelievo estensione immagine utente
+            filename = session.get("user") + estensione #Rinominazione immagine caricata dall'utente con il nome della sessione corrente (per utilizzo multi-utente contemporaneamente)
+            
+            #Sovrascrivere l'ultimo video caricato da un utente (se presente)  
+            if filename in listVideo:
+                os.remove(APP_ROOT+"/videos/"+filename)
+            session["lastVideo"] = filename
+            destination = "/".join([target, filename])
+            #Salvataggio video nella cartella ./videos
+            upload.save(destination)
+        
+        obj = yolo_detection_videos.detectObjectsSaveVideo(filename)
+
+        jsonResp = {'filename': filename}
+        goAhead2=True
+
+    return jsonify(jsonResp)
+
+@app.route('/WebcamClient/<filename>')
+def send_image_webcam(filename):
+    global goAhead2
+    goAhead2=True
+    return send_from_directory("images", filename)
+
+
 #Funzione per agire sulla cache
 @app.after_request
-def add_header(r):
-    """
-    Add headers to both force latest IE rendering engine or Chrome Frame,
-    and also to cache the rendered page for 10 minutes.
-    """
-    r.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    r.headers["Pragma"] = "no-cache"
-    r.headers["Expires"] = "0"
-    r.headers['Cache-Control'] = 'public, max-age=0'
-    return r
+def add_header(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 #Funzione per generare id casuale utente
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):

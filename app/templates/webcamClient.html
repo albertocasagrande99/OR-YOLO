@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+    <head>
+        <!-- templatemo 419 black white -->
+        <!-- 
+        Black White
+        http://www.templatemo.com/preview/templatemo_419_black_white
+        -->
+        <title>Your camera</title>
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+        <meta name="keywords" content="" />
+        <meta name="description" content="" />
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet" type="text/css">
+        <link href="static/core/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+        <link href="static/core/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link href="static/core/css/templatemo_style.css" rel="stylesheet" type="text/css">	
+        <link rel="shortcut icon" href="/static/assets/images/favicon.png" type="image/png">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" crossorigin="anonymous"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500&display=swap');
+            .table__head{
+                white-space: nowrap;
+                font-size: 16px;
+            }
+
+            table,td,th{
+                font-family: 'Raleway', sans-serif;
+            }
+
+            .reverse-spinner {
+                position: relative;
+                float: left;
+                margin-top: 8px;
+                margin-left: 15px;
+                height: 40px;
+                width: 40px;
+                border: 3px solid transparent;
+                border-top-color: #1976d2;
+                border-left-color: #1976d2;
+                border-radius: 50%;
+                -webkit-animation: spin 1.5s linear infinite;
+                animation: spin 1.5s linear infinite;
+            }
+
+            .reverse-spinner::before {
+                position: absolute;
+                top: 6px;
+                left: 6px;
+                right: 6px;
+                bottom: 6px;
+                content: "";
+                border: 3px solid transparent;
+                border-top-color: #03a9f4;
+                border-left-color: #03a9f4;
+                border-radius: 50%;
+                -webkit-animation: spin 1s linear infinite;
+                animation: spin 1s linear infinite;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="templatemo-logo visible-xs-block">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 white-bg logo-left-container">
+                <h1 class="logo-left">Object Detection</h1>
+            </div>			
+        </div>
+        <div class="templatemo-container">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 black-bg left-container" style="background-color: rgb(53, 91, 217)">
+                <h1 class="logo-left hidden-xs" style="margin-bottom: 40px;">Object</h1>	
+                <div class="tm-left-inner-container">
+                    <ul class="nav nav-stacked templatemo-nav">
+                        <li><a href="/"><i class="fa fa-home fa-medium"></i><b>Home</b></a></li>
+                        <li><a href="/image"><i class="fa fa-image fa-medium"></i><b>Image detector</b></a></li>
+                        <li><a href="/video"><i class="fa fa-video-camera fa-medium"></i><b>Video detector</b></a></li>
+                        <li><a href="/YouTubeVideo"><i class="fa fa-youtube-play fa-medium"></i><b>YouTube video detector</b></a></li>
+                        <li><a href="/Webcam"><i class="fa fa-camera fa-medium"></i><b>Webcam detector</b></a></li>
+                        <li><a href="/WebcamClient" class="active"><i class="fa fa-camera fa-medium"></i><b>Webcam detector (client)</b></a></li>
+                        </ul>
+                </div>
+            </div> <!-- left section -->
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 white-bg right-container">
+                <h1 class="logo-right hidden-xs" style="margin-bottom: 40px;">Detection</h1>
+                <div class="tm-right-inner-container">
+                    <h1 class="templatemo-header">Object detection using your own webcam</h1>
+                    <label for="selectOption">Seleziona una opzione</label>
+                    <select class="form-control" id="selectOption" name="selectedOption">
+                        <option value="" disabled selected>Select an option</option>
+                        <option value="picture">Take a picture</option>
+                        <option value="video">Record a video</option>
+                    </select>
+                    <div class="row picture">
+                        <div class="templatemo-item col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <h2>Take a picture <i class="fa fa-picture-o"></i></h2>		
+                            <div>
+                                <video autoplay="true" id="video" style="border-radius: 10px; width: 100%;" class="img-thumbnail"></video>
+                            </div>
+                            <div>
+                                <canvas id="canvas" width="658" height="490" style="display: none;"></canvas>
+                            </div>
+                            <button class="btn btn-primary" id="capture" style="float:left; border-radius: 5px; background-color: rgb(53, 91, 217); margin-top: 10px;">Capture <i class="fa fa-camera" aria-hidden="true"></i></button>
+                        </div>
+                        <div class="templatemo-item col-lg-6 col-md-6 col-sm-12 col-xs-12" id="result_image">
+                            <h2>Foto elaborata <i class="fa fa-picture-o"></i></h2>	
+                            <img id="img" src="" style="width: 100%; border-radius: 10px;" class="img-thumbnail">
+                        </div>
+                    </div>
+                    <div class="row oggetti">
+                        <div class="col-lg-12">
+                            <h2>Oggetti <i class="fa fa-car"></i></h2>
+                            <div>
+                                <table class="table table-striped text-center">
+                                    <thead class="table__head">
+                                        <tr>
+                                            <th scope="col" class="text-center" style="border-bottom: 2px solid lightblue; background-color: lightblue; border-radius: 10px 0 0 0;">#</th>
+                                            <th scope="col" class="text-center" style="border-bottom: 2px solid lightblue; background-color: lightblue;"><i class="fa fa-car" aria-hidden="true"></i> Object</th>
+                                            <th scope="col" class="text-center" style="border-bottom: 2px solid lightblue; background-color: lightblue; border-radius: 0 10px 0 0;"><i class="fa fa-check" aria-hidden="true"></i> Accuracy</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row video">
+                        <div class="alert alert-info" style="margin: 15px 15px 0px 15px; text-align: center;">
+                            <strong>È possibile registrare al massimo 10s di video</strong><br>
+                        </div>                
+                        
+                        <div class="templatemo-item col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <h2>Record a video <i class="fa fa-film"></i></h2>
+                            <div class="left">
+                                <video id="preview" style="border-radius: 10px; width: 100%;" class="img-thumbnail" autoplay muted></video>
+                                <button class="btn btn-primary" id="startButton" style="float:left; border-radius: 5px; background-color: rgb(53, 91, 217); margin-top: 10px;">Start <i class="fa fa-play-circle" aria-hidden="true"></i></button>
+                                <button class="btn btn-primary" id="stopButton" style="float:left; border-radius: 5px; background-color: rgb(53, 91, 217); margin-top: 10px; margin-left: 10px;">Stop <i class="fa fa-stop" aria-hidden="true"></i></button>
+                                <div id="loader">
+                                    <div class="reverse-spinner"></div>
+                                </div>
+                            </div>							
+                        </div>
+                        <div class="templatemo-item col-lg-6 col-md-6 col-sm-12 col-xs-12" id="result_video">
+                            <h2>Video elaborato <i class="fa fa-video-o"></i></h2>
+                            <video id="output" src="" style="border-radius: 10px; width: 100%;" class="img-thumbnail" controls></video>
+                        </div>
+                    </div>
+                    <div class="row col-lg-8" id="log_text" style="margin-top: 10px;"> 
+                        <pre id="log"></pre>      
+                    </div>
+                </div>	
+            </div> <!-- right section -->
+        </div>	
+    </body>
+    <script>
+        videoSrc = null;
+        var capture = document.getElementById("capture");
+
+        $(document).ready(function(){
+            hidePicture();
+            hideVideo();
+            $("select.form-control").change(function(){
+                var selectedOption = $(this).children("option:selected").val();
+                if(selectedOption == "picture"){
+                    showPicture();
+                    hideVideo();
+                }else{
+                    showVideo();
+                    hidePicture();
+                    if(videoSrc!=null){
+                        videoSrc.getTracks().forEach(function(track) {
+                            track.stop();
+                        });
+                    }
+                    
+                }
+            });
+        });
+
+        function showPicture(){
+            $(".picture").show();
+            $("#result_image").hide();
+            getWebCam();
+        }
+
+        function showVideo(){
+            $(".video").show();
+            $("#result_video").hide();
+            $("#loader").hide();
+        }
+
+        function hidePicture(){
+            $(".picture").hide();
+            $(".oggetti").hide();
+        }
+
+        function hideVideo(){
+            $(".video").hide();
+            $("#log_text").hide();
+        }
+
+
+        async function getWebCam(){
+            try{
+                videoSrc = await navigator.mediaDevices.getUserMedia({video:true});
+                var video = document.getElementById("video");
+                video.srcObject = videoSrc;
+            }catch(e){
+                console.log(e);
+            }
+        }
+
+        var canvas = document.getElementById("canvas");
+        var context = canvas.getContext('2d');
+
+        capture.addEventListener("click", function(){
+            context.drawImage(video,0,0,658,490);
+            capture.disabled = true;
+            submitToServer();
+        });
+
+        async function submitToServer() {
+            let imageBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+            let formData = new FormData();
+            formData.append("image", imageBlob, "image.png");
+        
+
+            let response = await fetch('http://localhost:4555/WebcamClient', {
+                method: 'POST',
+                body: formData,
+                
+            })
+            .then(response => response.json())  
+            .then(json => {
+                var file = json.filename;
+                //console.log(json.oggetti[0][0]);
+                var temp = "{{ url_for('send_image_webcam', filename='nome') }}";
+                temp = temp.replace("nome", file);
+                //console.log(JSON.stringify(json));
+                $("#img").attr("src", temp);
+                $("#result_image").show();
+
+                //tabella
+                var body = document.getElementsByTagName('body')[0];
+                var tbl = document.getElementsByTagName('table')[0];
+                var tbdy = document.getElementsByTagName('tbody')[0];
+                var n = Object.keys(json.oggetti).length;
+
+                while(tbdy.hasChildNodes()){
+                    tbdy.removeChild(tbdy.firstChild);
+                }
+
+                for (var i = 0; i < n; i++) {
+                    var tr = document.createElement('tr');
+                    for (var j = 0; j < 1; j++) {   
+                        var td = document.createElement('td');
+                        td.appendChild(document.createTextNode(i))
+                        tr.appendChild(td);
+
+                        var td2 = document.createElement('td');
+                        var obj = json.oggetti[i][0].charAt(0).toUpperCase() + json.oggetti[i][0].slice(1);
+                        td2.appendChild(document.createTextNode(obj))
+                        tr.appendChild(td2);
+
+                        var td3 = document.createElement('td');
+                        td3.appendChild(document.createTextNode(json.oggetti[i][1]))
+                        tr.appendChild(td3);           
+                    }
+                    tbdy.appendChild(tr);
+                }
+                $(".oggetti").show();
+                capture.disabled = false;
+            });
+        }
+
+        //Video part
+        let preview = document.getElementById("preview");
+        let startButton = document.getElementById("startButton");
+        let stopButton = document.getElementById("stopButton");
+        let logElement = document.getElementById("log");
+        var options = {mimeType: 'video/webm;codecs=h264'};
+
+        let recordingTimeMS = 5000;
+
+        function log(msg) {
+            logElement.innerHTML += msg;
+        }
+
+        function wait(delayInMS) {
+            return new Promise(resolve => setTimeout(resolve, delayInMS));
+        }
+
+        function startRecording(stream, lengthInMS) {
+            let recorder = new MediaRecorder(stream, options);
+            let data = [];
+
+            recorder.ondataavailable = event => data.push(event.data);
+            recorder.start();
+            log("");
+            log(recorder.state + " for " + (lengthInMS/1000) + " seconds...\n");
+
+            let stopped = new Promise((resolve, reject) => {
+                recorder.onstop = resolve;
+                recorder.onerror = event => reject(event.name);
+            });
+
+            let recorded = wait(lengthInMS).then(
+                () => recorder.state == "recording" && recorder.stop()
+            );
+
+            return Promise.all([
+                stopped,
+                recorded
+            ])
+            .then(() => data);
+        }
+
+        function stop(stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+
+        startButton.addEventListener("click", function() {
+            $("#output").attr("src", "");
+            $("#log_text").show();
+            $("#result_video").hide();
+            startButton.disabled = true;
+            stopButton.disabled = false;
+
+            navigator.mediaDevices.getUserMedia({
+                video: true
+            }).then(stream => {
+                preview.srcObject = stream;
+                preview.captureStream = preview.captureStream || preview.mozCaptureStream;
+                return new Promise(resolve => preview.onplaying = resolve);
+            }).then(() => startRecording(preview.captureStream(), recordingTimeMS))
+            .then (recordedChunks => {
+                let recordedBlob = new Blob(recordedChunks, { type: "video/mp4" });
+
+                log("Successfully recorded " + recordedBlob.size + " bytes of " + recordedBlob.type + " media.");
+                startButton.disabled = false;
+                stopButton.disabled = true;
+                $("#loader").show();
+                submitVideoToServer(recordedBlob);
+            })
+            .catch(log);
+        }, false);
+
+        stopButton.addEventListener("click", function() {
+            stop(preview.srcObject);
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        }, false);
+
+
+        async function submitVideoToServer(recordedBlob){
+            let formDataVideo = new FormData();
+            formDataVideo.append("video", recordedBlob, "video.mp4");
+            let response = await fetch('http://localhost:4555/WebcamClient', {
+                method: 'POST',
+                body: formDataVideo,
+            })
+            .then(response => response.json())  
+            .then(json => {
+                $("#loader").hide();
+                var file = json.filename;
+                var temp = "{{ url_for('send_video', filename='nome') }}";
+                temp = temp.replace("nome", file);
+                $("#output").attr("src", temp);
+                $("#result_video").show();
+            });
+        }
+    </script>
+</html>

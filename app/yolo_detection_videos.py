@@ -20,7 +20,7 @@ COLORS = np.random.randint(0, 255, size = (len(LABELS), 3), dtype = 'uint8')
 
 
 #Salvataggio video e successiva visualizzazione
-def detectObjectsSaveVideo(video, total):
+def detectObjectsSaveVideo(video):
 	oggetti = []
 
 # get video frames and pass to YOLO for output
@@ -59,10 +59,8 @@ def detectObjectsSaveVideo(video, total):
 
 			# build blob and feed forward to YOLO to get bounding boxes and probability
 			blob = cv2.dnn.blobFromImage(frame, 1/255.0, (320,320), swapRB = True, crop = False)
-			start = time.time()
 			net.setInput(blob)
 			layerOutputs = net.forward(ln)
-			end = time.time()
 
 	
 	# get metrics from YOLO
@@ -122,11 +120,6 @@ def detectObjectsSaveVideo(video, total):
 				# fourcc = cv2.VideoWriter_fourcc(*'H264')
 				fourcc = cv2.VideoWriter_fourcc(*'H264')
 				writer = cv2.VideoWriter(APP_ROOT+'/videos/00'+video, fourcc, fps, (writer_width, writer_height), True)
-
-				if total > 0:
-					elap = (end - start)
-					print(f"[INFO] single frame took {round(elap/60,2)} minutes")
-					print(f"[INFO] total estimated time to finish: {((elap*total)/60)/KPS} minutes")
 
 			for i in range(6):
 				writer.write(frame)
