@@ -6,11 +6,11 @@
         http://www.templatemo.com/preview/templatemo_419_black_white
         -->
         <title>Your camera</title>
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-        <meta http-equiv="Pragma" content="no-cache" />
-        <meta http-equiv="Expires" content="0" />
-        <meta name="keywords" content="" />
-        <meta name="description" content="" />
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+        <meta http-equiv="Pragma" content="no-cache"/>
+        <meta http-equiv="Expires" content="0"/>
+        <meta name="keywords" content=""/>
+        <meta name="description" content=""/>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet" type="text/css">
@@ -60,6 +60,8 @@
                 -webkit-animation: spin 1s linear infinite;
                 animation: spin 1s linear infinite;
             }
+
+            .w3-animate-left{position:relative;animation:animateleft 0.8s}@keyframes animateleft{from{left:-700px;opacity:0} to{left:0;opacity:1}}
         </style>
     </head>
     <body>
@@ -69,7 +71,7 @@
             </div>			
         </div>
         <div class="templatemo-container">
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 black-bg left-container" style="background-color: rgb(53, 91, 217)">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 black-bg left-container" style="background-color: rgb(53, 91, 217); z-index: 2;">
                 <h1 class="logo-left hidden-xs" style="margin-bottom: 40px;">Object</h1>	
                 <div class="tm-left-inner-container">
                     <ul class="nav nav-stacked templatemo-nav">
@@ -83,10 +85,10 @@
                 </div>
             </div> <!-- left section -->
             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 white-bg right-container">
-                <h1 class="logo-right hidden-xs" style="margin-bottom: 40px;">Detection</h1>
-                <div class="tm-right-inner-container">
-                    <h1 class="templatemo-header">Object detection using your own webcam</h1>
-                    <label for="selectOption">Seleziona una opzione</label>
+                <h1 class="logo-right hidden-xs w3-animate-left" style="margin-bottom: 40px;">Detection</h1>
+                <div class="tm-right-inner-container w3-animate-left">
+                    <h1 class="templatemo-header">Object detection using your webcam</h1>
+                    <label for="selectOption">Please select an option</label>
                     <select class="form-control" id="selectOption" name="selectedOption">
                         <option value="" disabled selected>Select an option</option>
                         <option value="picture">Take a picture</option>
@@ -104,13 +106,13 @@
                             <button class="btn btn-primary" id="capture" style="float:left; border-radius: 5px; background-color: rgb(53, 91, 217); margin-top: 10px;">Capture <i class="fa fa-camera" aria-hidden="true"></i></button>
                         </div>
                         <div class="templatemo-item col-lg-6 col-md-6 col-sm-12 col-xs-12" id="result_image">
-                            <h2>Foto elaborata <i class="fa fa-picture-o"></i></h2>	
+                            <h2>Processed photo <i class="fa fa-picture-o"></i></h2>	
                             <img id="img" src="" style="width: 100%; border-radius: 10px;" class="img-thumbnail">
                         </div>
                     </div>
                     <div class="row oggetti">
                         <div class="col-lg-12">
-                            <h2>Oggetti <i class="fa fa-car"></i></h2>
+                            <h2>Objects <i class="fa fa-search"></i></h2>
                             <div>
                                 <table class="table table-striped text-center">
                                     <thead class="table__head">
@@ -128,7 +130,7 @@
                     </div>
                     <div class="row video">
                         <div class="alert alert-info" style="margin: 15px 15px 0px 15px; text-align: center;">
-                            <strong>È possibile registrare al massimo 10s di video</strong><br>
+                            <strong>A maximum of 10s of video can be recorded</strong><br>
                         </div>                
                         
                         <div class="templatemo-item col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -143,7 +145,7 @@
                             </div>							
                         </div>
                         <div class="templatemo-item col-lg-6 col-md-6 col-sm-12 col-xs-12" id="result_video">
-                            <h2>Video elaborato <i class="fa fa-video-o"></i></h2>
+                            <h2>Processed video <i class="fa fa-play-circle"></i></h2>
                             <video id="output" src="" style="border-radius: 10px; width: 100%;" class="img-thumbnail" controls></video>
                         </div>
                     </div>
@@ -256,7 +258,7 @@
                     var tr = document.createElement('tr');
                     for (var j = 0; j < 1; j++) {   
                         var td = document.createElement('td');
-                        td.appendChild(document.createTextNode(i))
+                        td.appendChild(document.createTextNode(i+1))
                         tr.appendChild(td);
 
                         var td2 = document.createElement('td');
@@ -282,7 +284,7 @@
         let logElement = document.getElementById("log");
         var options = {mimeType: 'video/webm;codecs=h264'};
 
-        let recordingTimeMS = 5000;
+        let recordingTimeMS = 10000;
 
         function log(msg) {
             logElement.innerHTML += msg;
@@ -298,7 +300,6 @@
 
             recorder.ondataavailable = event => data.push(event.data);
             recorder.start();
-            log("");
             log(recorder.state + " for " + (lengthInMS/1000) + " seconds...\n");
 
             let stopped = new Promise((resolve, reject) => {
@@ -327,6 +328,7 @@
             $("#result_video").hide();
             startButton.disabled = true;
             stopButton.disabled = false;
+            logElement.innerHTML = "";
 
             navigator.mediaDevices.getUserMedia({
                 video: true

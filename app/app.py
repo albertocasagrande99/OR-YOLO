@@ -71,7 +71,6 @@ def upload():
         filename = upload.filename
         session["quality"] = request.form.get('qualità')
         estensione = os.path.splitext(filename)[1] #Prelievo estensione immagine utente
-        #estensione = filename[-3:]
         filename = session.get("user") + estensione #Rinominazione immagine caricata dall'utente con il nome della sessione corrente (per utilizzo multi-utente contemporaneamente)
         
         #Sovrascrivere l'ultima immagine caricata da un utente (se presente)  
@@ -103,7 +102,7 @@ def upload():
         obj_count = [(k, v) for k, v in objects.items()]
     return render_template("image.html", filename = session.get("lastImage"), oggetti=obj, ogg_count=obj_count, tempo = tempo)
 
-
+#Invio al client dell'immagine elaborata
 @app.route('/image/<filename>')
 def send_image(filename):
     global goAhead
@@ -172,7 +171,7 @@ def upload_video():
 
     return render_template("video.html", filename=filename, type="immagini")
 
-
+#Invio al client del video elaborato
 @app.route('/video/<filename>')
 def send_video(filename):
     return send_from_directory("videos", '00'+filename)
@@ -193,7 +192,6 @@ def link_video():
     else:
         print("Nuovo Utente, creazione sessione")
         session["user"] = id_generator(10)
-    print("Codice sessione corrente: "+session.get("user"))
 
     url = request.form.get('url')
     try:
@@ -251,11 +249,12 @@ def video_feed(filename):
                         mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
+#Visualizzazione della pagine WebcamClient
 @app.route("/WebcamClient")
 def webcamClient():
     return render_template("webcamClient.html")
 
-#Metodo richiamato quando l'utente seleziona la webcam desiderata
+#Metodo richiamato quando l'utente scatta una foto o registra un video
 @app.route("/WebcamClient", methods=["POST"])
 def upload_data():
     global goAhead2
@@ -275,7 +274,7 @@ def upload_data():
         print("Nuovo Utente, creazione sessione")
         session["user"] = id_generator(10)
 
-    if(len(request.files.getlist("image")) > 0):
+    if(len(request.files.getlist("image")) > 0):  #L'utente ha scattato una foto?
         target = os.path.join(APP_ROOT, 'images/')
         #Creazione cartella ./images se non presente
         if not os.path.isdir(target):
@@ -299,9 +298,8 @@ def upload_data():
         obj, tempo = yolo_detection_images.result(session.get("lastImage"))
         jsonResp = {'filename': filename, 'oggetti': obj}
         goAhead2=True
-        
-        
-    elif(len(request.files.getlist("video")) > 0):
+           
+    elif(len(request.files.getlist("video")) > 0):  #L'utente ha registrato un video?
         target = os.path.join(APP_ROOT, 'videos/')
         #Creazione cartella ./videos se non presente
         if not os.path.isdir(target):
@@ -311,8 +309,8 @@ def upload_data():
             listVideo = os.listdir(APP_ROOT+"/videos")
             print("Il file caricato è {}".format(upload.filename))
             filename = upload.filename
-            estensione = os.path.splitext(filename)[1] #Prelievo estensione immagine utente
-            filename = session.get("user") + estensione #Rinominazione immagine caricata dall'utente con il nome della sessione corrente (per utilizzo multi-utente contemporaneamente)
+            estensione = os.path.splitext(filename)[1] #Prelievo estensione video utente
+            filename = session.get("user") + estensione #Rinominazione video caricato dall'utente con il nome della sessione corrente (per utilizzo multi-utente contemporaneamente)
             
             #Sovrascrivere l'ultimo video caricato da un utente (se presente)  
             if filename in listVideo:
@@ -329,12 +327,12 @@ def upload_data():
 
     return jsonify(jsonResp)
 
+#Invio al client dell'immagine elaborata
 @app.route('/WebcamClient/<filename>')
 def send_image_webcam(filename):
     global goAhead2
     goAhead2=True
     return send_from_directory("images", filename)
-
 
 #Funzione per agire sulla cache
 @app.after_request
