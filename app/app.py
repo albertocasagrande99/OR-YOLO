@@ -49,20 +49,12 @@ def upload():
     while goAhead==False:
         time.sleep(3)
     goAhead = False
-
-    #Controllo sessione dell'utente
-    if not session.get('user') is None:
-        print("Sessione già creata per l'utente")
-    else:
-        print("Nuovo Utente, creazione sessione")
-        session["user"] = id_generator(10)
-    print("Codice sessione corrente: "+session.get("user"))
-
     
-    target = os.path.join(APP_ROOT, 'images/')
+    check_session()
+    
     #Creazione cartella ./images se non presente
-    if not os.path.isdir(target):
-        os.mkdir(target)
+    target = os.path.join(APP_ROOT, 'images/')
+    check_target(target)
 
     #Salvataggio immagine caricata dall'utente nella cartella ./images
     for upload in request.files.getlist("file"):
@@ -118,19 +110,11 @@ def video():
 #Metodo richiamato quando si carica un video sul server
 @app.route("/video", methods=["POST"])
 def upload_video():
-    #Controllo sessione dell'utente
-    if not session.get('user') is None:
-        print("Sessione già creata per l'utente")
-    else:
-        print("Nuovo Utente, creazione sessione")
-        session["user"] = id_generator(10)
-    print("Codice sessione corrente: "+session.get("user"))
-
+    check_session()
     
-    target = os.path.join(APP_ROOT, 'videos/')
     #Creazione cartella ./videos se non presente
-    if not os.path.isdir(target):
-        os.mkdir(target)
+    target = os.path.join(APP_ROOT, 'videos/')
+    check_target(target)
 
     #Salvataggio video caricato dall'utente nella cartella ./videos
     for upload in request.files.getlist("file"):
@@ -149,7 +133,7 @@ def upload_video():
         upload.save(destination)
 
         #Numero di frame del video. Se num_frame <= 200, il video di output viene salvato.
-        vs = cv2.VideoCapture(APP_ROOT+'/videos/'+filename)
+        vs = cv2.VideoCapture(APP_ROOT+'/videos/'+session.get("lastVideo"))
         fps = vs.get(cv2.CAP_PROP_FPS)
         try:
             prop = cv2.CAP_PROP_FRAME_COUNT if imutils.is_cv2() else cv2.CAP_PROP_FRAME_COUNT
@@ -163,13 +147,13 @@ def upload_video():
         vs.release()
         if(total < 200):
             oggetti = []
-            obj = yolo_detection_videos.detectObjectsSaveVideo(filename)
+            obj = yolo_detection_videos.detectObjectsSaveVideo(session.get("lastVideo"))
             for i in obj: 
                 if i not in oggetti: 
                     oggetti.append(i) 
-            return render_template("video.html", filename=filename, type="video", oggetti=oggetti)
+            return render_template("video.html", filename=session.get("lastVideo"), type="video", oggetti=oggetti)
 
-    return render_template("video.html", filename=filename, type="immagini")
+    return render_template("video.html", filename=session.get("lastVideo"), type="immagini")
 
 #Invio al client del video elaborato
 @app.route('/video/<filename>')
@@ -186,12 +170,7 @@ def YTvideo():
 #Metodo richiamato quando l'utente invia al server il link al video di youtube
 @app.route("/YouTubeVideo", methods=["POST"])
 def link_video():
-    #Controllo sessione dell'utente
-    if not session.get('user') is None:
-        print("Sessione già creata per l'utente")
-    else:
-        print("Nuovo Utente, creazione sessione")
-        session["user"] = id_generator(10)
+    check_session()
 
     url = request.form.get('url')
     try:
@@ -207,14 +186,17 @@ def link_video():
 #Visualizzazione della pagina webcam.html e invio delle informazioni relative alle webcam disponibili
 @app.route("/Webcam")
 def webcam():
+    check_session()
+
     #Controllo webcam disponibili
     valid_cams = []
-    for i in range(4):
+    for i in range(3):
         cap = cv2.VideoCapture(i)
         if cap is None or not cap.isOpened():
             print('Warning: unable to open video source: ', i)
         else:
             valid_cams.append(i)
+        cap.release()
 
     session["webcams"] = valid_cams
     session["webcam"] = ""
@@ -223,12 +205,7 @@ def webcam():
 #Metodo richiamato quando l'utente seleziona la webcam desiderata
 @app.route("/Webcam", methods=["POST"])
 def select_webcam():
-    #Controllo sessione dell'utente
-    if not session.get('user') is None:
-        print("Sessione già creata per l'utente")
-    else:
-        print("Nuovo Utente, creazione sessione")
-        session["user"] = id_generator(10)
+    check_session()
 
     webcam = request.form.get('selectedWebcam')
     session["webcam"] = webcam
@@ -248,7 +225,7 @@ def video_feed(filename):
         return Response(yolo_detection_videos.findVideoObjects(filename, "video", None),
                         mimetype='multipart/x-mixed-replace; boundary=frame')
 
-
+#############   Webcam Client   #############
 #Visualizzazione della pagine WebcamClient
 @app.route("/WebcamClient")
 def webcamClient():
@@ -267,18 +244,12 @@ def upload_data():
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
 
-    #Controllo sessione dell'utente
-    if not session.get('user') is None:
-        print("Sessione già creata per l'utente")
-    else:
-        print("Nuovo Utente, creazione sessione")
-        session["user"] = id_generator(10)
+    check_session()
 
     if(len(request.files.getlist("image")) > 0):  #L'utente ha scattato una foto?
-        target = os.path.join(APP_ROOT, 'images/')
         #Creazione cartella ./images se non presente
-        if not os.path.isdir(target):
-            os.mkdir(target)
+        target = os.path.join(APP_ROOT, 'images/')
+        check_target(target)
 
         for upload in request.files.getlist("image"):
             listImmagini = os.listdir(APP_ROOT+"/images")
@@ -300,10 +271,9 @@ def upload_data():
         goAhead2=True
            
     elif(len(request.files.getlist("video")) > 0):  #L'utente ha registrato un video?
-        target = os.path.join(APP_ROOT, 'videos/')
         #Creazione cartella ./videos se non presente
-        if not os.path.isdir(target):
-            os.mkdir(target)
+        target = os.path.join(APP_ROOT, 'videos/')
+        check_target(target)
 
         for upload in request.files.getlist("video"):
             listVideo = os.listdir(APP_ROOT+"/videos")
@@ -320,8 +290,7 @@ def upload_data():
             #Salvataggio video nella cartella ./videos
             upload.save(destination)
         
-        obj = yolo_detection_videos.detectObjectsSaveVideo(filename)
-
+        obj = yolo_detection_videos.detectObjectsSaveVideo(session.get("lastVideo"))
         jsonResp = {'filename': filename}
         goAhead2=True
 
@@ -346,8 +315,21 @@ def add_header(response):
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
+#Controllo sessione dell'utente
+def check_session():
+    if not session.get('user') is None:
+        print("Sessione già creata per l'utente")
+    else:
+        print("Nuovo Utente, creazione sessione")
+        session["user"] = id_generator(10)
+
+#Creazione cartella target se non presente
+def check_target(target):
+    if not os.path.isdir(target):
+        os.mkdir(target)
+
 #Funzioni richiamate al momento della creazione del Server
 if __name__ == "__main__":
     app.secret_key = 'super secret key'
     app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-    app.run(host='0.0.0.0', port=4555, debug=True)
+    app.run(host='0.0.0.0', port=4555, debug=True, threaded=True)

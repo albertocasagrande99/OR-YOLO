@@ -21,6 +21,8 @@
         img{
             border-radius: 10px;
         }
+
+        .w3-animate-left{position:relative;animation:animateleft 0.8s}@keyframes animateleft{from{left:-700px;opacity:0} to{left:0;opacity:1}}
     </style>
 </head>
 <body>
@@ -30,7 +32,7 @@
 		</div>			
 	</div>
 	<div class="templatemo-container">
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 left-container" style="background-color: rgb(53, 91, 217)"> 
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 left-container" style="background-color: rgb(53, 91, 217); z-index: 2;"> 
 			<h1 class="logo-left hidden-xs" style="color: white; margin-bottom: 40px;">Object</h1>			
 			<div class="tm-left-inner-container">
 				<ul class="nav nav-stacked templatemo-nav">
@@ -38,29 +40,23 @@
                     <li><a href="/image"><i class="fa fa-image fa-medium"></i><b>Image detector</b></a></li>
                     <li><a href="/video"><i class="fa fa-video-camera fa-medium"></i><b>Video detector</b></a></li>
                     <li><a href="/YouTubeVideo"><i class="fa fa-youtube-play fa-medium"></i><b>YouTube video detector</b></a></li>
-                    <li><a href="/Webcam" class="active"><i class="fa fa-camera fa-medium"></i><b>Webcam detector</b></a></li>
+                    <li><a href="/Webcam" class="active"><i class="fa fa-camera fa-medium"></i><b>Webcam detector (server)</b></a></li>
                     <li><a href="/WebcamClient"><i class="fa fa-camera fa-medium"></i><b>Webcam detector (client)</b></a></li>
 				</ul>
 			</div>
 		</div> <!-- left section -->
 		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 white-bg right-container">	
             <img src="static/assets/images/logo-2.svg" alt="Logo" style="width: 20%; position: absolute; top: 20px; right: 20px; z-index: 100;">
-			<h1 class="logo-right hidden-xs" style="margin-bottom: 40px;">Detection</h1>	
-			<div class="tm-right-inner-container">
+			<h1 class="logo-right hidden-xs w3-animate-left" style="margin-bottom: 40px;">Detection</h1>	
+			<div class="tm-right-inner-container w3-animate-left">
+                <h1 class="templatemo-header">Object detection using server's webcam</h1>
                 <div id="webcams">
                     <h1 class="templatemo-header"></h1>
-                    <header>
-                        <div style="text-align:center; padding-top: 10px;">
-                            <div class="alert alert-info" >
-                                <strong>Seleziona una webcam tra quelle disponibili</strong><br>
-                            </div>                
-                        </div>
-                    </header>
                     <form id="form-webcam" action="{{ url_for('select_webcam') }}" method="POST" enctype="multipart/form-data">
                         <div class="form-group">
-                            <label for="selectWebcam">Seleziona una webcam</label>
+                            <label for="selectWebcam">Please select a webcam</label>
                             <select class="form-control" id="selectWebcam" name="selectedWebcam">
-                                <option value="" disabled selected>Webcam disponibili</option>
+                                <option value="" disabled selected>Available webcams</option>
                                 {% for cam in webcams %}
                                 <option value="{{ loop.index-1 }}">Webcam {{ cam }}</option>
                                 {% endfor %}

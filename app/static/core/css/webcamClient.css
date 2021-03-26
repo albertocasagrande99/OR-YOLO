@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500&display=swap');
+.table__head{
+    white-space: nowrap;
+    font-size: 16px;
+}
+
+table,td,th{
+    font-family: 'Raleway', sans-serif;
+}
+
+.reverse-spinner {
+    position: relative;
+    float: left;
+    margin-top: 8px;
+    margin-left: 15px;
+    height: 40px;
+    width: 40px;
+    border: 3px solid transparent;
+    border-top-color: #1976d2;
+    border-left-color: #1976d2;
+    border-radius: 50%;
+    -webkit-animation: spin 1.5s linear infinite;
+    animation: spin 1.5s linear infinite;
+}
+
+.reverse-spinner::before {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    right: 6px;
+    bottom: 6px;
+    content: "";
+    border: 3px solid transparent;
+    border-top-color: #03a9f4;
+    border-left-color: #03a9f4;
+    border-radius: 50%;
+    -webkit-animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
+}
+
+.w3-animate-left{position:relative;animation:animateleft 0.8s}@keyframes animateleft{from{left:-700px;opacity:0} to{left:0;opacity:1}}

@@ -240,7 +240,7 @@ def findVideoObjects(video, type, source):
 
 #Link video YouTube
 def findYouTubeObjects(url):
-	print(url)
+	print("Link inserito: ", url)
 	net = cv2.dnn.readNetFromDarknet(model_config, model)
 	ln = net.getLayerNames()
 	ln = [ln[i[0] - 1] for i in net.getUnconnectedOutLayers()]

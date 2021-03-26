@@ -17,52 +17,9 @@
         <link href="static/core/css/bootstrap.min.css" rel="stylesheet" type="text/css">
         <link href="static/core/css/font-awesome.min.css" rel="stylesheet" type="text/css">
         <link href="static/core/css/templatemo_style.css" rel="stylesheet" type="text/css">	
+        <link href="static/core/css/webcamClient.css" rel="stylesheet" type="text/css">
         <link rel="shortcut icon" href="/static/assets/images/favicon.png" type="image/png">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" crossorigin="anonymous"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500&display=swap');
-            .table__head{
-                white-space: nowrap;
-                font-size: 16px;
-            }
-
-            table,td,th{
-                font-family: 'Raleway', sans-serif;
-            }
-
-            .reverse-spinner {
-                position: relative;
-                float: left;
-                margin-top: 8px;
-                margin-left: 15px;
-                height: 40px;
-                width: 40px;
-                border: 3px solid transparent;
-                border-top-color: #1976d2;
-                border-left-color: #1976d2;
-                border-radius: 50%;
-                -webkit-animation: spin 1.5s linear infinite;
-                animation: spin 1.5s linear infinite;
-            }
-
-            .reverse-spinner::before {
-                position: absolute;
-                top: 6px;
-                left: 6px;
-                right: 6px;
-                bottom: 6px;
-                content: "";
-                border: 3px solid transparent;
-                border-top-color: #03a9f4;
-                border-left-color: #03a9f4;
-                border-radius: 50%;
-                -webkit-animation: spin 1s linear infinite;
-                animation: spin 1s linear infinite;
-            }
-
-            .w3-animate-left{position:relative;animation:animateleft 0.8s}@keyframes animateleft{from{left:-700px;opacity:0} to{left:0;opacity:1}}
-        </style>
     </head>
     <body>
         <div class="templatemo-logo visible-xs-block">
@@ -79,7 +36,7 @@
                         <li><a href="/image"><i class="fa fa-image fa-medium"></i><b>Image detector</b></a></li>
                         <li><a href="/video"><i class="fa fa-video-camera fa-medium"></i><b>Video detector</b></a></li>
                         <li><a href="/YouTubeVideo"><i class="fa fa-youtube-play fa-medium"></i><b>YouTube video detector</b></a></li>
-                        <li><a href="/Webcam"><i class="fa fa-camera fa-medium"></i><b>Webcam detector</b></a></li>
+                        <li><a href="/Webcam"><i class="fa fa-camera fa-medium"></i><b>Webcam detector (server)</b></a></li>
                         <li><a href="/WebcamClient" class="active"><i class="fa fa-camera fa-medium"></i><b>Webcam detector (client)</b></a></li>
                         </ul>
                 </div>
@@ -281,6 +238,7 @@
         let preview = document.getElementById("preview");
         let startButton = document.getElementById("startButton");
         let stopButton = document.getElementById("stopButton");
+        stopButton.disabled = true;
         let logElement = document.getElementById("log");
         var options = {mimeType: 'video/webm;codecs=h264'};
 
@@ -323,35 +281,38 @@
         }
 
         startButton.addEventListener("click", function() {
-            $("#output").attr("src", "");
-            $("#log_text").show();
-            $("#result_video").hide();
-            startButton.disabled = true;
-            stopButton.disabled = false;
-            logElement.innerHTML = "";
+            if(check_browser() == false){
+                $("#output").attr("src", "");
+                $("#log_text").show();
+                $("#result_video").hide();
+                startButton.disabled = true;
+                stopButton.disabled = false;
+                logElement.innerHTML = "";
 
-            navigator.mediaDevices.getUserMedia({
-                video: true
-            }).then(stream => {
-                preview.srcObject = stream;
-                preview.captureStream = preview.captureStream || preview.mozCaptureStream;
-                return new Promise(resolve => preview.onplaying = resolve);
-            }).then(() => startRecording(preview.captureStream(), recordingTimeMS))
-            .then (recordedChunks => {
-                let recordedBlob = new Blob(recordedChunks, { type: "video/mp4" });
+                navigator.mediaDevices.getUserMedia({
+                    video: true
+                }).then(stream => {
+                    preview.srcObject = stream;
+                    preview.captureStream = preview.captureStream || preview.mozCaptureStream;
+                    return new Promise(resolve => preview.onplaying = resolve);
+                }).then(() => startRecording(preview.captureStream(), recordingTimeMS))
+                .then (recordedChunks => {
+                    let recordedBlob = new Blob(recordedChunks, { type: "video/mp4" });
 
-                log("Successfully recorded " + recordedBlob.size + " bytes of " + recordedBlob.type + " media.");
-                startButton.disabled = false;
-                stopButton.disabled = true;
-                $("#loader").show();
-                submitVideoToServer(recordedBlob);
-            })
-            .catch(log);
+                    log("Successfully recorded " + recordedBlob.size + " bytes of " + recordedBlob.type + " media.");
+                    stopButton.disabled = true;
+                    $("#loader").show();
+                    submitVideoToServer(recordedBlob);
+                })
+                .catch(log);
+            }
+            else{
+                alert("Unfortunately safari does not support this feature");
+            }
         }, false);
 
         stopButton.addEventListener("click", function() {
             stop(preview.srcObject);
-            startButton.disabled = false;
             stopButton.disabled = true;
         }, false);
 
@@ -371,7 +332,15 @@
                 temp = temp.replace("nome", file);
                 $("#output").attr("src", temp);
                 $("#result_video").show();
+                startButton.disabled = false;
             });
+        }
+
+        function check_browser(){
+            var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { 
+                return p.toString() === "[object SafariRemoteNotification]"; 
+            })(!window['safari'] || (typeof safari !== 'undefined' && window['safari'].pushNotification));
+            return isSafari;
         }
     </script>
 </html>
