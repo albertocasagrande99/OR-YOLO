@@ -6,14 +6,13 @@ WORKDIR /app
 #Install dependences
 COPY requirements.txt .
 RUN pip install -r requirements.txt
+RUN pip install youtube_dl
 RUN apt-get update
 RUN apt-get install ffmpeg libsm6 libxext6  -y
 
 COPY /app .
 
 CMD ["python3", "app.py"]
-
-
 
 #Comando da usare per build: docker build -t dockerpython .
 #Comando per run: docker run -p 4555:4555 dockerpython
