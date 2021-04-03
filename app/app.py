@@ -1,21 +1,16 @@
 import os
 from flask import Flask, request, render_template, send_from_directory, jsonify
-from flask import Flask, session, request, redirect, url_for, Response, after_this_request
+from flask import Flask, session, request, Response, after_this_request
 import yolo_detection_images
 import yolo_detection_videos
 import string
 import random
-import json
 import cv2
 from PIL import Image
 import PIL
-import glob
 import imutils
 import time
-import numpy as np
 import pafy
-import base64
-import re
 
 __author__ = 'IO'
 
@@ -216,13 +211,13 @@ def select_webcam():
 @app.route('/video_feed/<filename>')
 def video_feed(filename):
     if(filename == "link"):
-        return Response(yolo_detection_videos.findYouTubeObjects(session["url"]),
+        return Response(yolo_detection_videos.findVideoObjects("link", session.get("url")),
                         mimetype='multipart/x-mixed-replace; boundary=frame')
     elif(filename=="webcam"):
-        return Response(yolo_detection_videos.findVideoObjects(None, "webcam", session.get("webcam")),
+        return Response(yolo_detection_videos.findVideoObjects("webcam", session.get("webcam")),
                         mimetype='multipart/x-mixed-replace; boundary=frame')
     else:
-        return Response(yolo_detection_videos.findVideoObjects(filename, "video", None),
+        return Response(yolo_detection_videos.findVideoObjects("video", filename),
                         mimetype='multipart/x-mixed-replace; boundary=frame')
 
 #############   Webcam Client   #############
