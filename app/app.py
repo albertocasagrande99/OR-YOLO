@@ -79,6 +79,7 @@ def upload():
             im.save(APP_ROOT+"/images/"+session.get("lastImage"),optimize=True,quality=10)
 
         obj, tempo = yolo_detection_images.result(session.get("lastImage"))
+        goAhead=True
 
         #Salvataggio degli oggetti presenti nell'immagine in una lista e conteggio elementi per ogni classe di oggetti
         objects = []
