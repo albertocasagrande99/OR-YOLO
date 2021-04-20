@@ -71,9 +71,9 @@ def upload():
         #Salvataggio dell'immagine secondo la qualità selezionata dall'utente
         im = Image.open(APP_ROOT+"/images/"+session.get("lastImage"))
         print(f"The image size dimensions are: {im.size}")
-        if(session.get("quality") == "alta"):
+        if(session.get("quality") == "high"):
             im.save(APP_ROOT+"/images/"+session.get("lastImage"),optimize=True,quality=100)
-        elif(session.get("quality") == "media"):
+        elif(session.get("quality") == "medium"):
             im.save(APP_ROOT+"/images/"+session.get("lastImage"),optimize=True,quality=50)
         else:
             im.save(APP_ROOT+"/images/"+session.get("lastImage"),optimize=True,quality=10)
@@ -88,7 +88,7 @@ def upload():
         objects = {i:objects.count(i) for i in objects}
         obj_count = []
         obj_count = [(k, v) for k, v in objects.items()]
-    return render_template("image.html", filename = session.get("lastImage"), oggetti=obj, ogg_count=obj_count, tempo = tempo)
+    return render_template("image.html", filename = session.get("lastImage"), oggetti=obj, ogg_count=obj_count, tempo = tempo, qualità=session.get("quality"))
 
 #Invio al client dell'immagine elaborata
 @app.route('/image/<filename>')

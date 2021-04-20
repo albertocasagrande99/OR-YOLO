@@ -81,15 +81,15 @@
                                         <p class="labelRadio">Select image quality</p>
                                         <div class="segmentedControl">
                                             <span class="segmentedControl--group" data-tooltip="Original quality">
-                                                <input type="radio" name="qualità" id="alta" value="alta" checked />
+                                                <input type="radio" name="qualità" id="alta" value="high" checked />
                                                 <label class="labelRadio" for="alta">High</label>
                                             </span>
                                             <span class="segmentedControl--group" data-tooltip="Quality reduced by 50%">
-                                                <input type="radio" name="qualità" id="media" value="media"/>
+                                                <input type="radio" name="qualità" id="media" value="medium"/>
                                                 <label class="labelRadio" for="media">Medium</label>
                                             </span>
                                             <span class="segmentedControl--group" data-tooltip="Quality reduced by 90%">
-                                                <input type="radio" name="qualità" id="bassa" value="bassa"/>
+                                                <input type="radio" name="qualità" id="bassa" value="low"/>
                                                 <label class="labelRadio" for="bassa">Low</label>
                                             </span>
                                         </div>
@@ -100,7 +100,7 @@
                         </div>
                     </div>
                     <div id="oggettiRilevati" class="w3-animate-bottom">
-                        <h1 class="templatemo-header">Uploaded image processed </i></h1>
+                        <h1 class="templatemo-header">Uploaded image processed ({{ qualità }} quality):</h1>
                         {% if filename!=null %} 
                         <div class="wrapper">
                             <img id="img" src="{{ url_for('send_image', filename=filename) }}" style="width: 80%;">
