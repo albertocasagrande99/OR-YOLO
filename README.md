@@ -18,7 +18,7 @@ Dopo aver scaricato lo zip da GitHub e averlo decompresso, per installare le lib
 Infine, per eseguire l'applicativo da terminale, bisogna digitare il comando `python3 app.py` dopo essersi posizionati all'interno della cartella `app`. 
 Una volta fatta partire l'applicazione, è possibile accedervi semplicemente usando un browser, mediante l'indirizzo `localhost:4555`.
 
-**N.B. All'interno di questa repository non è presente il file dei weights, che deve essere scaricato manualmente mediante il [link](https://pjreddie.com/media/files/yolov3.weights). Il file scaricato deve successivamente essere salvato all'interno della cartella `cfg` con il nome di `yolov3.weights`.**
+**N.B. All'interno di questa repository non è presente il file dei weights, che deve essere scaricato manualmente mediante il [link](https://pjreddie.com/media/files/yolov3.weights). Il file scaricato deve successivamente essere salvato all'interno della cartella `app/cfg` con il nome di `yolov3.weights`.**
 
 ### Come creare un ambiente virtuale
 Qualora non si volessero installare le librerie direttamente sul proprio terminale c'è la possibilità di creare un ambiente 
