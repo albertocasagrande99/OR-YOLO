@@ -1,5 +1,5 @@
 # Remote image/video recognition using YOLO
-![logo](/app/static/assets/images/logo-2.svg)
+<img src="/app/static/assets/images/logo-2.svg" align="center">
 Progetto riguardante lo sviluppo di un'architettura client / server per il riconoscimento di oggetti all'interno di immagini e video, utilizzando YOLO.
 
 ## Istruzioni
