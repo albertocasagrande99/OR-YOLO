@@ -132,8 +132,7 @@
                         videoSrc.getTracks().forEach(function(track) {
                             track.stop();
                         });
-                    }
-                    
+                    }                
                 }
             });
         });
@@ -181,6 +180,7 @@
         });
 
         async function submitToServer() {
+            //https://developer.mozilla.org/it/docs/Web/API/HTMLCanvasElement/toBlob
             let imageBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
             let formData = new FormData();
             formData.append("image", imageBlob, "image.png");
@@ -194,10 +194,8 @@
             .then(response => response.json())  
             .then(json => {
                 var file = json.filename;
-                //console.log(json.oggetti[0][0]);
                 var temp = "{{ url_for('send_image_webcam', filename='nome') }}";
                 temp = temp.replace("nome", file);
-                //console.log(JSON.stringify(json));
                 $("#img").attr("src", temp);
                 $("#result_image").show();
 
