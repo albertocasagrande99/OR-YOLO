@@ -12,7 +12,7 @@ import imutils
 import time
 import pafy
 
-__author__ = 'IO'
+__author__ = 'Alberto Casagrande'
 
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
