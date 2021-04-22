@@ -38,4 +38,20 @@ table,td,th{
     animation: spin 1s linear infinite;
 }
 
+@keyframes swing {
+    0% {
+        transform: scale(1,1);
+    }
+    50% {
+        transform: scale(1.2,1.2);
+    }
+    100% {
+        transform: scale(1,1);
+    }
+}
+
+#yolo {
+    animation: swing 2s infinite ease-in-out;
+}
+
 .w3-animate-left{position:relative;animation:animateleft 0.8s}@keyframes animateleft{from{left:-700px;opacity:0} to{left:0;opacity:1}}
