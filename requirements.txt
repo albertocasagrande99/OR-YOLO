@@ -4,3 +4,4 @@ opencv_python==4.4.0.44
 numpy==1.19.2
 pafy==0.5.5
 Pillow==8.1.2
+youtube_dl==2021.03.03
