@@ -72,11 +72,14 @@ def upload():
         im = Image.open(APP_ROOT+"/images/"+session.get("lastImage"))
         print(f"The image size dimensions are: {im.size}")
         if(session.get("quality") == "high"):
-            im.save(APP_ROOT+"/images/"+session.get("lastImage"),optimize=True,quality=100)
+            #im.save(APP_ROOT+"/images/"+session.get("lastImage"),quality=100, subsampling=0)
+            print(os.stat(APP_ROOT+"/images/"+session.get("lastImage")).st_size)
         elif(session.get("quality") == "medium"):
             im.save(APP_ROOT+"/images/"+session.get("lastImage"),optimize=True,quality=50)
+            print(os.stat(APP_ROOT+"/images/"+session.get("lastImage")).st_size)
         else:
             im.save(APP_ROOT+"/images/"+session.get("lastImage"),optimize=True,quality=10)
+            print(os.stat(APP_ROOT+"/images/"+session.get("lastImage")).st_size)
 
         obj, tempo = yolo_detection_images.result(session.get("lastImage"))
         goAhead=True
