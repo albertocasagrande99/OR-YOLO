@@ -41,3 +41,13 @@ $ . venv/bin/activate
 Windows: `> venv\Scripts\activate`
 
 Dopo aver attivato l'ambiente virtuale, digitando il comando `pip install -r requirements.txt` vengono installate le librerie necessarie.
+
+## Docker
+In alternativa, è possibile scaricare l'immagine docker del server e avviare il container, senza la necessità di scaricare alcuna libreria.
+I comandi da utilizzare sono:
+```
+docker pull albertocasagrande/yolo-webapp:1.0
+
+docker run -p 4555:4555 albertocasagrande/yolo-webapp:1.0
+```
+**N.B. È necessario avere installato Docker sul proprio terminale ed averlo avviato.**
